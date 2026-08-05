@@ -1,0 +1,924 @@
+CMU 发音扰动下一步实施规划
+============================
+
+一、当前结论
+------------
+
+根据本轮失败样本，当前方案不是“完全无效”，而是处于：
+
+1. 已经出现部分方向性信号；
+2. 规则体系覆盖不完整；
+3. 缩写和普通英文词混用了同一套规则；
+4. 单条规则、CMU 序列、TTS 输入和 ASR 输出之间缺少完整对应关系；
+5. 部分 ASR 输出发生语言漂移；
+6. 当前评测容易把“内容接近但格式不同”和“真正精确命中”混在一起。
+
+因此，下一步不建议立刻切换 IPA，也不建议根据 GT 直接增加 G→D、G→T、M→N 这类目标指向性规则。
+
+推荐继续保留：
+
+英文/缩写输入
+→ CMU 发音表示
+→ CosyVoice 3
+→ 音频扰动
+→ ASR
+
+但需要重构规则层和实验记录层。
+
+
+二、下一阶段总目标
+------------------
+
+下一阶段的目标不是立刻提升全部 GT 覆盖率，而是回答三个问题：
+
+1. CosyVoice 3 是否能够稳定执行修改后的 CMU 音素？
+2. 通用 CMU 发音扰动是否能够稳定提高真实混淆的出现概率？
+3. 普通英文词和缩写是否应该使用不同的扰动机制？
+
+完成这一阶段后，再决定：
+
+1. 继续扩充 CMU 规则；
+2. 引入 IPA 作为补充；
+3. 或更换 TTS 后端。
+
+
+三、阶段 1：重构逐样本记录
+---------------------------
+
+当前聚合结果只能看到：
+
+term
+rules_tried
+top_asr_outputs
+
+但无法确认：
+
+哪条规则
+→ 生成了哪个 CMU 序列
+→ 形成了哪条 CosyVoice 输入
+→ 对应哪段音频
+→ 最终被 ASR 识别成什么
+
+下一版必须每个生成变体单独保存一行。
+
+推荐 JSONL 结构：
+
+{
+  "term": "Box",
+  "variant_id": "box.cluster_delete_k_before_s.001",
+  "token_type": "word",
+
+  "canonical_cmu": [
+    "B",
+    "AA1",
+    "K",
+    "S"
+  ],
+
+  "perturbed_cmu": [
+    "B",
+    "AA1",
+    "S"
+  ],
+
+  "rules": [
+    {
+      "rule_id": "en.cluster_delete.k_before_final_s",
+      "operation": "delete",
+      "source": "K",
+      "target": "",
+      "position": 2
+    }
+  ],
+
+  "cosyvoice_input": "...",
+  "speaker_id": "speaker_01",
+  "seed": 1234,
+  "clean_audio_path": "...",
+  "augmented_audio_path": "...",
+
+  "asr_mode": "auto",
+  "asr_output_raw": "Packs.",
+  "asr_output_sanitized": "Packs",
+
+  "gt_candidates": [
+    "boss",
+    "Board",
+    "Fox"
+  ]
+}
+
+验收标准：
+
+1. 每条 ASR 输出可以唯一追溯到一个变体。
+2. 可以明确知道失败来自哪条规则。
+3. 可以直接统计每条规则的输出分布。
+
+
+四、阶段 2：保留原始格式的评测
+-----------------------------
+
+格式错误本身是目标的一部分，因此不能用强归一化把以下形式视为相同：
+
+IDHub
+ID Hub
+
+JTC
+J T C
+
+PTCP
+P T C P
+
+IDUI
+IDU I
+I D U I
+
+评测需要分成四级。
+
+
+4.1 Exact match
+
+只允许做最小技术清洗：
+
+1. 去掉首尾空白；
+2. Unicode NFKC；
+3. 根据统一约定去掉 ASR 自动追加的句末标点。
+
+不能删除：
+
+1. 内部空格；
+2. 内部点号；
+3. 连字符；
+4. 字母和数字间边界。
+
+
+4.2 Content match
+
+只用于诊断。
+
+例如：
+
+GT：IDHub
+ASR：ID Hub
+
+结果：
+
+exact_match = false
+content_match = true
+difference_type = space_insertion
+
+注意：
+
+content_match 不能计入主命中率。
+
+
+4.3 Near phonetic match
+
+例如：
+
+GT：I D U I
+ASR：I D A I
+
+标记：
+
+near_phonetic_match = true
+
+它表示当前发音已经进入目标邻域，但仍未命中。
+
+
+4.4 Language drift
+
+例如：
+
+ASR 输出中出现中文、日文、韩文或泰文。
+
+标记：
+
+language_drift = true
+
+不需要强制英文作为唯一方案。
+
+推荐：
+
+1. auto-language 作为主分支；
+2. language=en 作为可选诊断分支；
+3. 两路结果分别记录；
+4. 不合并成一个结果；
+5. 不因为固定英文减少召回就强制使用英文模式。
+
+
+五、阶段 3：建立 baseline gate
+------------------------------
+
+每个术语在生成扰动前，先验证标准发音链路是否稳定。
+
+流程：
+
+标准 CMU
+→ CosyVoice 3
+→ 干净音频
+→ ASR
+
+每个术语至少生成：
+
+3 个不同 seed
+或
+2 个说话人 × 2 个 seed
+
+记录：
+
+1. 标准术语命中次数；
+2. 常见错误输出；
+3. 是否发生语言漂移；
+4. 是否存在 TTS 发音异常。
+
+建议定义：
+
+baseline_stable：
+至少 50% 标准音频被识别成规范术语。
+
+baseline_unstable：
+标准发音本身几乎无法正确识别。
+
+对于 baseline_unstable 的术语：
+
+1. 不立即用于判断扰动规则有效性；
+2. 单独进入 TTS/ASR 兼容性分析；
+3. 可以保留作为高难样本，但不能混入主规则评测。
+
+
+六、阶段 4：验证 CosyVoice 的 CMU 执行能力
+-----------------------------------------
+
+在扩充规则前，先做小规模 pronunciation probe。
+
+选择：
+
+1. Idea
+2. Box
+3. Code
+4. Skill
+5. Voice
+6. Hub
+
+每个词测试：
+
+1. 普通文本输入；
+2. 标准 CMU；
+3. 单音素替换；
+4. 单音素删除；
+5. 音素序列不变但边界不同。
+
+示例：
+
+Box
+
+普通文本：
+Box
+
+标准 CMU：
+B AA1 K S
+
+扰动 CMU：
+B AA1 S
+
+Code
+
+标准 CMU：
+K OW1 D
+
+扰动 CMU：
+K OW1 T
+
+Idea
+
+标准 CMU：
+AY0 D IY1 AH0
+
+扰动 CMU：
+AY0 D IY1
+
+需要人工抽听，确认：
+
+1. 模型是否真的删除了目标音素；
+2. 是否自动纠正回标准发音；
+3. 是否出现异常韵律；
+4. 是否能听出仍然来自原词；
+5. 是否已经完全变成另一个标准词。
+
+建议人工标签：
+
+0 = 未执行扰动
+1 = 执行很弱
+2 = 执行清楚，仍可辨认原词
+3 = 已明显变成另一个词
+4 = 音频异常
+
+优先保留 1 和 2。
+
+
+七、阶段 5：拆分普通单词与缩写规则
+---------------------------------
+
+下一版必须分为两条规则链。
+
+
+7.1 普通英文词
+
+处理对象：
+
+Idea
+Box
+Skill
+Code
+Voice
+Claude
+Nexent
+
+操作单位：
+
+CMU 音素
+
+
+7.2 全大写缩写
+
+处理对象：
+
+TMG
+PDCP
+VLLM
+SMC
+JDC
+
+操作单位：
+
+完整字母单元
+
+例如：
+
+TMG
+→ T | M | G
+
+展开：
+
+T → T IY1
+M → EH1 M
+G → JH IY1
+
+缩写规则不应该在展开后的整条 CMU 序列里随机删除或替换音素。
+
+需要保留：
+
+{
+  "letter": "G",
+  "phones": ["JH", "IY1"]
+}
+
+这样可以区分：
+
+1. 修改字母名称内部音素；
+2. 删除完整字母；
+3. 合并重复字母。
+
+
+八、阶段 6：扩充普通英文词 CMU 规则
+---------------------------------
+
+现有规则需要扩充，但必须使用通用规则族，而不是根据 GT 编写特定答案。
+
+
+8.1 元音近邻替换
+
+新增规则族：
+
+en.vowel_neighbor_substitution
+
+作用：
+
+把当前元音替换为发音特征较近的 CMU 元音。
+
+第一版候选邻域：
+
+IH → IY / EH / AH
+IY → IH
+AE → EH / AH / AA
+EH → AE / IH / AH
+AH → AE / AA / UH
+AA → AH / AO
+AO → AA / AW
+OW → AO / UH
+OY → OW / AO
+EY → EH / IH
+
+约束：
+
+1. 保留原重音数字；
+2. 每次只替换一个元音；
+3. 候选按发音距离排序；
+4. 每个源元音只取前 1～2 个候选；
+5. 不因为某个 GT 存在就直接指定目标。
+
+示例：
+
+Kit：
+K IH1 T
+→ K EY1 T
+
+RAG：
+R AE1 G
+→ R AH1 G
+
+Claude：
+K L AO1 D
+→ K L AW1 D
+
+
+8.2 非重读元音弱化
+
+新增：
+
+AE0 → AH0
+EH0 → AH0
+IH0 → AH0
+IY0 → IH0
+UW0 → UH0
+
+注意：
+
+这类规则可能属于一般英语连读，不一定是中式发音。
+
+每条规则增加：
+
+phenomenon_source:
+general_connected_speech
+或
+mandarin_l2_english
+或
+gt_observed
+
+
+8.3 上下文化辅音簇简化
+
+废弃：
+
+final_cluster_delete_penultimate
+
+改成明确上下文规则。
+
+第一版可以包括：
+
+K → 删除 / 后面是词尾 S
+T → 删除 / 位于特定词尾辅音簇
+D → 删除 / 位于特定词尾辅音簇
+
+示例：
+
+Box：
+B AA1 K S
+→ B AA1 S
+
+规则必须保存：
+
+1. source；
+2. left_context；
+3. right_context；
+4. word_final 条件；
+5. 删除后的合法性检查。
+
+
+8.4 辅音特征近邻替换
+
+新增通用规则族：
+
+en.consonant_feature_neighbor
+
+优先允许：
+
+1. 只改变清浊；
+2. 发音方式相同；
+3. 发音部位相邻；
+4. 流音 R/L；
+5. 鼻音发音部位变化；
+6. 擦音和塞擦音近邻。
+
+候选类别：
+
+B ↔ P
+D ↔ T
+G ↔ K
+F ↔ V
+S ↔ Z
+R ↔ L
+V → W
+TH → S / T
+DH → D / Z
+CH ↔ SH
+JH → ZH / D
+M ↔ N
+N ↔ NG
+
+注意：
+
+1. 不全部同时启用；
+2. 第一轮选择高可信子集；
+3. 每次只改一个辅音；
+4. 方向独立保存；
+5. 不根据某个术语 GT 调整目标。
+
+
+8.5 辅音簇插入弱元音
+
+低概率新增：
+
+en.cluster_schwa_epenthesis
+
+示例：
+
+Skill：
+S K IH1 L
+→ S AH0 K IH1 L
+
+约束：
+
+1. 只允许指定辅音簇；
+2. 每条样本最多插入一次；
+3. 不和其他强规则组合；
+4. 单独统计 ASR 分词变化。
+
+
+九、阶段 7：新增缩写通用规则
+----------------------------
+
+缩写规则不能直接写：
+
+G → D
+G → T
+M → N
+
+应该作用于字母名称结构。
+
+
+9.1 字母名称 onset 近邻扰动
+
+规则：
+
+en.acronym.letter_onset_neighbor
+
+示例：
+
+G：
+JH IY1
+
+保持 IY1，不改变韵核，只修改 JH。
+
+候选通过辅音特征距离产生。
+
+规则本身不预先指定最终字母。
+
+
+9.2 字母名称 nucleus 扰动
+
+规则：
+
+en.acronym.letter_nucleus_neighbor
+
+例如：
+
+某些字母名共享 IY、EY、EH 等韵核。
+
+第一版低概率启用，避免破坏过强。
+
+
+9.3 完整字母删除
+
+规则：
+
+en.acronym.letter_unit_deletion
+
+例如：
+
+V L L M
+→ V L M
+
+或：
+
+S S O
+→ S O
+
+优先级：
+
+1. 重复字母；
+2. 内部字母；
+3. 较长缩写中的弱位置。
+
+限制：
+
+至少保留两个字母。
+
+
+9.4 重复字母合并
+
+规则：
+
+en.acronym.repeated_letter_merge
+
+例如：
+
+V L L M
+→ V L M
+
+与随机删除分开统计。
+
+
+9.5 字母单位边界变化
+
+规则：
+
+en.acronym.letter_boundary_change
+
+例如：
+
+J T C
+JTC
+
+注意：
+
+这类规则改变的是 TTS 的字母间停顿和边界，不是直接修改最终文本格式。
+
+最终格式仍然由 ASR 产生。
+
+
+十、阶段 8：控制变体生成规模
+----------------------------
+
+下一轮不要组合太多规则。
+
+普通单词：
+
+1. baseline；
+2. 一个元音规则；
+3. 一个辅音规则；
+4. 一个删除规则；
+5. 一个边界规则。
+
+缩写：
+
+1. baseline；
+2. 一个字母内部音素规则；
+3. 一个完整字母删除；
+4. 一个重复字母合并；
+5. 一个字母边界规则。
+
+第一轮禁止：
+
+1. 同时改两个元音；
+2. 同时改两个辅音；
+3. 同时删除和替换多个音素；
+4. 根据 GT 搜索最短编辑路径；
+5. 为每个术语手工指定目标变体。
+
+每个术语建议生成：
+
+普通词：5～10 个变体
+短缩写：5～8 个变体
+复合术语：8～15 个变体
+
+
+十一、阶段 9：实验设计
+----------------------
+
+第一组：普通英文词
+
+Idea
+Box
+Skill
+Code
+Voice
+Claude
+Nexent
+
+目的：
+
+验证元音、辅音、弱元音和辅音簇规则。
+
+
+第二组：缩写
+
+TMG
+JDC
+PDCP
+SMC
+VLLM
+SSO
+
+目的：
+
+验证字母名称内部扰动和完整字母删除。
+
+
+第三组：混合术语
+
+IdeaHub
+IdeaUI
+IdeaManager
+CosyVoice
+ClaudeCode
+CloudRSE
+
+目的：
+
+验证：
+
+1. CamelCase 切分；
+2. 单词和缩写共存；
+3. 边界连接；
+4. ASR 重新分词。
+
+
+十二、阶段 10：音频条件
+-----------------------
+
+第一轮先只跑干净音频。
+
+只有在确认：
+
+1. CosyVoice 执行规则；
+2. clean audio 能产生方向性变化；
+3. baseline 稳定；
+
+之后再加入音频扰动。
+
+第二轮音频条件：
+
+速度：
+0.95
+1.00
+1.05
+
+SNR：
+clean
+20 dB
+10 dB
+
+混响：
+none
+light_meeting_room
+
+每个 baseline 和 perturbed 版本必须使用相同音频参数配对。
+
+
+十三、评测指标
+--------------
+
+主指标：
+
+1. exact_gt_match_rate
+2. per_rule_exact_match_rate
+3. per_term_exact_match_rate
+
+辅助指标：
+
+1. content_match_rate
+2. format_mismatch_rate
+3. near_phonetic_match_rate
+4. language_drift_rate
+5. baseline_accuracy
+6. tts_rule_execution_rate
+7. no_effect_rate
+8. over_perturbation_rate
+
+
+十四、阶段判断标准
+------------------
+
+继续使用 CMU 的条件：
+
+1. CosyVoice 对大部分单音素修改有明确执行效果；
+2. baseline 稳定术语中，扰动后 ASR 错误率明显上升；
+3. 至少若干通用规则能跨多个术语产生相似错误模式；
+4. 缩写字母单元规则能产生新的合理混淆；
+5. GT 命中不依赖术语专用规则。
+
+考虑增加 IPA 的条件：
+
+1. CMU 只能表达过强的离散变化；
+2. 需要模拟部分双元音化、送气变化、半浊化等连续变化；
+3. CosyVoice 对某些 CMU 替换自动纠正；
+4. 同一通用规则在多个词上都无法产生合理发音；
+5. 已确认问题不在记录、ASR 和 TTS 接口层。
+
+
+十五、推荐实施顺序
+------------------
+
+第 1 步：
+重构逐样本 JSONL 记录。
+
+第 2 步：
+重写评测，保留内部空格和标点差异。
+
+第 3 步：
+建立 baseline gate。
+
+第 4 步：
+完成 CosyVoice CMU pronunciation probe。
+
+第 5 步：
+拆分 word_phone_rules 和 acronym_letter_rules。
+
+第 6 步：
+删除 final_cluster_delete_penultimate。
+
+第 7 步：
+增加 vowel_neighbor_substitution。
+
+第 8 步：
+增加 contextual_cluster_simplification。
+
+第 9 步：
+增加 consonant_feature_neighbor。
+
+第 10 步：
+增加 acronym letter unit deletion 和 repeated letter merge。
+
+第 11 步：
+只用 clean audio 运行小规模实验。
+
+第 12 步：
+统计规则执行率、GT 精确命中率和格式差异。
+
+第 13 步：
+根据结果决定是否增加音频扰动。
+
+第 14 步：
+最后再决定是否引入 IPA 后端。
+
+
+十六、下一轮最小可执行实验
+--------------------------
+
+术语：
+
+Idea
+Box
+Skill
+Code
+TMG
+JDC
+PDCP
+VLLM
+IdeaHub
+IdeaUI
+ClaudeCode
+
+每个术语：
+
+1. 3 个 baseline；
+2. 3～6 个单规则变体；
+3. 只生成 clean audio；
+4. ASR auto-language；
+5. 可选额外跑一份 language=en 作为诊断；
+6. 每条结果单独写入 JSONL。
+
+预计规模：
+
+11 个术语
+× 平均 7 个版本
+× 2 个说话人
+
+约 154 条音频。
+
+这一规模足够验证下一版 CMU 规则是否比当前版本更稳定，而不会过早扩大实验成本。
+
+
+十七、最终目标流程
+------------------
+
+英文/缩写输入
+    ↓
+结构切分
+    ↓
+确定标准读法
+    ↓
+结构化表示
+├── word token
+├── acronym letter units
+└── boundaries
+    ↓
+生成 baseline
+    ↓
+按类型生成单规则变体
+├── 普通单词 CMU 音素规则
+└── 缩写字母单元规则
+    ↓
+CosyVoice 3
+    ↓
+干净音频
+    ↓
+ASR
+    ↓
+逐样本日志
+    ↓
+精确 GT 评测
+    ↓
+确认规则有效后再加入音频扰动

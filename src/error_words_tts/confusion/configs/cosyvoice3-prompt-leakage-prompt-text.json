@@ -1,0 +1,31 @@
+{
+  "input_txt": "gt-prompt-leakage.txt",
+  "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-pronunciation.json",
+  "output_dir": "outputs/confusion/cosyvoice3-prompt-leakage-prompt-text",
+  "sample_language": "Auto",
+  "include_original_audio": true,
+  "include_known_confusions": false,
+  "augmentation": {
+    "enabled": false
+  },
+  "asr": {
+    "url": "http://127.0.0.1:8756/v1/audio/transcriptions",
+    "model": "qwen3-asr",
+    "workers": 1,
+    "language": null,
+    "language_from_manifest": false,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "service": {
+      "manage": true,
+      "distribution": "Ubuntu-24.04",
+      "working_directory": "/home/jsqdc/qwen3-asr",
+      "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python",
+      "module": "qwenasr_service.main",
+      "config": "config/service.yaml",
+      "process_match": "qwenasr_service.main"
+    }
+  }
+}

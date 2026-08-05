@@ -1,0 +1,8 @@
+{
+  "variants": "outputs/pronunciation/ideahub/pronunciation-variants.jsonl",
+  "engine_config": "src/error_words_tts/tts/configs/qwen3-tts-1.7b-pronunciation.json",
+  "output_dir": "outputs/tts/ideahub-pronunciation-qwen",
+  "renderabilities": ["text_approximation"],
+  "instruction_suffix": "Follow the provided wording exactly. Do not correct, normalize, respell, or replace unusual pronunciation.",
+  "continue_on_error": true
+}

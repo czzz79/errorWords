@@ -1,0 +1,12 @@
+{
+  "description": "GT3 英文单词与缩写的独立轻量实验：canonical-only 文本读法变体；CosyVoice neutral_clear 单指令、原始音频、不加通用后处理；单档 Qwen3-ASR 解码。",
+  "input_txt": "resources/gt3-by-type/english-word-acronym.txt",
+  "output_dir": "outputs/experiments/gt3-english-word-acronym-cosy-basic",
+  "sample_language": "English",
+  "include_known_confusions": false,
+  "stages": {"pronunciation": true, "tts": true, "augmentation": true, "asr": true, "report": true, "dictionary_postprocess": false},
+  "pronunciation": {"mode": "english_reading", "include_canonical": false, "max_variants_per_term": 6},
+  "tts": {"runs": [{"name": "cosyvoice", "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe", "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-neutral-clear.json"}]},
+  "augmentation": {"include_original_audio": true, "seed": 20260804, "continue_on_error": true, "perturbations": []},
+  "asr": {"workers": 1, "language": null, "prompt": null, "timeout_seconds": 180, "wait_seconds": 300, "continue_on_error": true, "repeats": 1, "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756}, "conditions": [{"name": "english-reading-t065-p100-k050-mp000", "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}]}
+}

@@ -1,0 +1,77 @@
+{
+  "description": "GT3 中文单音节 GT 自动补全声母/韵母关系的增量矩阵：只合成相对既有模糊拼音实验新增的 gt_target_component 载体；旧的 canonical 与静态规则音频/ASR 结果不重复运行。",
+  "input_txt": "resources/gt3-by-type/zh-single-syllable.txt",
+  "output_dir": "outputs/experiments/gt3-zh-fuzzy-pinyin-derived-components-delta-matrix",
+  "sample_language": "Chinese",
+  "include_known_confusions": false,
+  "stages": {
+    "pronunciation": true,
+    "tts": true,
+    "augmentation": true,
+    "asr": true,
+    "report": true,
+    "dictionary_postprocess": false
+  },
+  "pronunciation": {
+    "mode": "fuzzy_pinyin",
+    "rules_path": "resources/chinese-fuzzy-pinyin-rules.csv",
+    "derive_gt_component_rules": true,
+    "include_canonical": false,
+    "include_variant_origins": ["gt_target_component"],
+    "max_rule_level": 3,
+    "max_carriers_per_pinyin": 3,
+    "max_variants_per_term": 60,
+    "carrier_rime_dictionary": "resources/wusong-base.dict.yaml",
+    "carrier_high_frequency_words": "resources/high_frequency_words.txt",
+    "carrier_jieba_dictionary": "resources/jieba-dict.txt"
+  },
+  "tts": {
+    "runs": [
+      {
+        "name": "cosyvoice",
+        "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe",
+        "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-pronunciation.json"
+      }
+    ]
+  },
+  "augmentation": {
+    "include_original_audio": true,
+    "seed": 20260803,
+    "continue_on_error": true,
+    "perturbations": [
+      {"name": "speed-090", "type": "speed", "factor": 0.9},
+      {"name": "speed-110", "type": "speed", "factor": 1.1},
+      {"name": "noise-18db", "type": "white_noise", "snr_db": 18},
+      {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+      {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+    ]
+  },
+  "asr": {
+    "workers": 1,
+    "language": null,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 1,
+    "service": {
+      "mode": "managed",
+      "distribution": "Ubuntu-24.04",
+      "working_directory": "/home/jsqdc/qwen3-asr",
+      "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python",
+      "base_config": "config/service-ideahub-random.yaml",
+      "host": "127.0.0.1",
+      "port": 8756
+    },
+    "conditions": [
+      {
+        "name": "fuzzy-pinyin-derived-components-t065-p100-k050-mp000",
+        "temperature": 0.65,
+        "top_p": 1.0,
+        "top_k": 50,
+        "min_p": 0.0,
+        "seed": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "链式扰动实验定义；复用已完成的 84 条输入清单，以便重跑 ASR 或报告。扰动参数保存在 augmentation.perturbations，开启 augmentation 时会对本实验 TTS manifest 生效。",
+  "input_txt": "resources/ideahub.txt", "candidate_terms_txt": "resources/ideahub_confusion_terms.txt", "output_dir": "outputs/experiments/ideahub-cosy-chain",
+  "stages": {"pronunciation": false, "tts": false, "augmentation": false, "asr": true, "report": true, "dictionary_postprocess": false},
+  "augmentation": {"include_original_audio": true, "seed": 20260731, "perturbations": [
+    {"name":"speed090-noise18","type":"chain","steps":[{"name":"speed-090","type":"speed","factor":0.9},{"name":"noise-18db","type":"white_noise","snr_db":18}]},
+    {"name":"speed110-noise18","type":"chain","steps":[{"name":"speed-110","type":"speed","factor":1.1},{"name":"noise-18db","type":"white_noise","snr_db":18}]},
+    {"name":"speed110-lowpass2400","type":"chain","steps":[{"name":"speed-110","type":"speed","factor":1.1},{"name":"lowpass-2400hz","type":"lowpass","cutoff_hz":2400}]},
+    {"name":"noise12-lowpass2400","type":"chain","steps":[{"name":"noise-12db","type":"white_noise","snr_db":12},{"name":"lowpass-2400hz","type":"lowpass","cutoff_hz":2400}]},
+    {"name":"speed110-noise12-lowpass2400","type":"chain","steps":[{"name":"speed-110","type":"speed","factor":1.1},{"name":"noise-12db","type":"white_noise","snr_db":12},{"name":"lowpass-2400hz","type":"lowpass","cutoff_hz":2400}]},
+    {"name":"speed110-noise12-lowpass2400-clip025","type":"chain","steps":[{"name":"speed-110","type":"speed","factor":1.1},{"name":"noise-12db","type":"white_noise","snr_db":12},{"name":"lowpass-2400hz","type":"lowpass","cutoff_hz":2400},{"name":"hard-clip-025","type":"hard_clip","threshold":0.25}]}
+  ]},
+  "asr": {"input_manifests": ["outputs/benchmarks/ideahub-cosy-chain-20260731-full/asr-input-manifest.jsonl"], "filter_text":"IdeaHub", "expected_input_rows":84, "workers":1, "repeats":3, "timeout_seconds":180, "wait_seconds":300,
+    "service":{"mode":"managed","distribution":"Ubuntu-24.04","working_directory":"/home/jsqdc/qwen3-asr","python":"/home/jsqdc/miniconda3/envs/qwenasr/bin/python","base_config":"config/service-ideahub-random.yaml","host":"127.0.0.1","port":8756},
+    "conditions":[{"name":"greedy","temperature":0,"top_p":1,"top_k":0,"min_p":0,"seed":null,"repeats":1},{"name":"high-random","temperature":1,"top_p":1,"top_k":50,"min_p":0,"seed":null,"repeats":3}]}
+}

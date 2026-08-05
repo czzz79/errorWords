@@ -1,0 +1,50 @@
+{
+  "description": "GT3 英文/缩写 CMU 音素扰动的单项音频扰动实验：复用 clean CMU TTS，仅运行五种单项后处理和同一 ASR 解码条件。",
+  "input_txt": "resources/gt3-by-type/english-word-acronym.txt",
+  "output_dir": "outputs/experiments/gt3-english-cmu-cosy-single-augmentations",
+  "output_readme": "# GT3 English CMU single-augmentation experiment\n\nInput: all English/acronym GT terms from `resources/gt3-by-type/english-word-acronym.txt`.\n\nUpstream reuse: 359 clean CMU/CosyVoice TTS samples from `gt3-english-cmu-cosy-clean`.\n\nTest: exactly one audio perturbation per sample: speed 0.90, speed 1.10, white noise at 18 dB SNR, low-pass at 3200 Hz, and hard clipping at 0.35. The clean source audio is intentionally excluded because it is already evaluated in the upstream experiment.\n\nExpected ASR inputs: 1,795 (359 x 5). ASR: managed WSL Qwen3-ASR, temperature 0.65, top_p 1.0, top_k 50, min_p 0.0, seed null.\n\nOutputs: `augmentation/`, `asr-input-manifest.jsonl`, `results/`, and `report/`.\n",
+  "sample_language": "English",
+  "include_known_confusions": false,
+  "stages": {
+    "pronunciation": false,
+    "tts": false,
+    "augmentation": true,
+    "asr": true,
+    "report": true,
+    "dictionary_postprocess": false
+  },
+  "augmentation": {
+    "input_manifest": "outputs/experiments/gt3-english-cmu-cosy-clean/tts/manifest.jsonl",
+    "include_original_audio": false,
+    "seed": 20260804,
+    "continue_on_error": true,
+    "perturbations": [
+      {"name": "speed-090", "type": "speed", "factor": 0.9},
+      {"name": "speed-110", "type": "speed", "factor": 1.1},
+      {"name": "noise-18db", "type": "white_noise", "snr_db": 18},
+      {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+      {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+    ]
+  },
+  "asr": {
+    "workers": 1,
+    "language": null,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 1,
+    "service": {
+      "mode": "managed",
+      "distribution": "Ubuntu-24.04",
+      "working_directory": "/home/jsqdc/qwen3-asr",
+      "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python",
+      "base_config": "config/service-ideahub-random.yaml",
+      "host": "127.0.0.1",
+      "port": 8756
+    },
+    "conditions": [
+      {"name": "english-cmu-t065-p100-k050-mp000", "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  }
+}

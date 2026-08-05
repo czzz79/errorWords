@@ -1,0 +1,11 @@
+{
+  "samples": "src/error_words_tts/pronunciation/samples/confusion-batch-02.json",
+  "rule_files": [
+    "src/error_words_tts/pronunciation/rules/english.json",
+    "src/error_words_tts/pronunciation/rules/chinese.json"
+  ],
+  "enabled_rules": "all",
+  "max_rule_count": 2,
+  "output": "outputs/pronunciation/confusion-batch-02/pronunciation-variants.jsonl",
+  "summary": "outputs/pronunciation/confusion-batch-02/summary.json"
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "rule_id": "en.unstressed_vowel_reduction",
+    "language": "english",
+    "operation": "en_unstressed_vowel_reduction",
+    "tags": ["vowel:reduction", "stress:unstressed"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "en.h_deletion",
+    "language": "english",
+    "operation": "en_h_deletion",
+    "tags": ["phoneme:deletion", "consonant:h", "articulation:weak"],
+    "tts_renderability": "text_approximation"
+  },
+  {
+    "rule_id": "en.final_consonant_deletion",
+    "language": "english",
+    "operation": "en_final_consonant_deletion",
+    "tags": ["phoneme:deletion", "position:word-final"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "en.final_stop_devoicing",
+    "language": "english",
+    "operation": "en_final_stop_devoicing",
+    "tags": ["phoneme:substitution", "position:word-final", "feature:devoicing"],
+    "tts_renderability": "text_approximation"
+  },
+  {
+    "rule_id": "en.consonant_substitution",
+    "language": "english",
+    "operation": "en_consonant_substitution",
+    "tags": ["phoneme:substitution", "pairs:b-p,d-t,r-l"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "en.connected_boundary",
+    "language": "english",
+    "operation": "en_connected_boundary",
+    "tags": ["speech:connected", "boundary:merged"],
+    "tts_renderability": "text_approximation"
+  },
+  {
+    "rule_id": "en.letter_spelling",
+    "language": "english",
+    "operation": "en_letter_spelling",
+    "tags": ["reading-mode:letter-spelling"],
+    "tts_renderability": "text_approximation"
+  },
+  {
+    "rule_id": "en.unstressed_syllable_deletion",
+    "language": "english",
+    "operation": "en_unstressed_syllable_deletion",
+    "tags": ["syllable:deletion", "stress:unstressed", "articulation:reduced"],
+    "tts_renderability": "phoneme_required"
+  }
+]

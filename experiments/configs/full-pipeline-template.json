@@ -1,0 +1,10 @@
+{
+  "description": "新术语的完整管线模板：替换 input_txt 和 output_dir；TTS 引擎细节仍在 engine JSON 中。默认 external ASR，需先由用户启动服务。",
+  "input_txt": "resources/ideahub.txt", "output_dir": "outputs/experiments/new-experiment",
+  "stages": {"pronunciation": true, "tts": true, "augmentation": true, "asr": true, "report": true, "dictionary_postprocess": true},
+  "pronunciation": {"rule_files": ["src/error_words_tts/pronunciation/rules/english.json", "src/error_words_tts/pronunciation/rules/chinese.json"], "enabled_rules": "all", "max_rule_count": 1, "renderabilities": ["text_approximation"]},
+  "tts": {"runs": [{"name":"cosyvoice", "engine_config":"src/error_words_tts/tts/configs/cosyvoice3-pronunciation.json"}]},
+  "augmentation": {"include_original_audio":true, "seed":20260717, "perturbations":[{"name":"noise-18db","type":"white_noise","snr_db":18}]},
+  "asr": {"workers":1, "service":{"mode":"external","host":"127.0.0.1","port":8756}, "conditions":[{"name":"default","temperature":0,"top_p":1,"top_k":0,"min_p":0,"seed":null}]},
+  "dictionary_postprocess": {}
+}

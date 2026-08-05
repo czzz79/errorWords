@@ -1,0 +1,32 @@
+{
+  "engine": "azure",
+  "voices": [
+    {
+      "name": "zh-CN-XiaoxiaoNeural",
+      "tags": ["locale:zh-CN", "voice:female", "source:azure-neural"]
+    },
+    {
+      "name": "en-US-JennyNeural",
+      "tags": ["locale:en-US", "voice:female", "source:azure-neural"]
+    }
+  ],
+  "instructions": [
+    {
+      "name": "default",
+      "tags": ["delivery:default", "control:voice-only"]
+    },
+    {
+      "name": "neutral",
+      "tags": ["delivery:neutral", "control:tag-only"]
+    },
+    {
+      "name": "fast",
+      "ssml_template": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"{locale}\"><voice name=\"{voice}\"><prosody rate=\"+15%\">{text}</prosody></voice></speak>",
+      "tags": ["delivery:neutral", "pace:fast", "control:ssml"]
+    },
+    {
+      "name": "conversational",
+      "tags": ["delivery:conversational", "style:relaxed", "control:tag-only"]
+    }
+  ]
+}

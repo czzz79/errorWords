@@ -1,0 +1,10 @@
+{
+  "samples": "src/error_words_tts/pronunciation/samples/chinese-confusion-pairs.json",
+  "rule_files": [
+    "src/error_words_tts/pronunciation/rules/chinese.json"
+  ],
+  "enabled_rules": "all",
+  "max_rule_count": 2,
+  "output": "outputs/pronunciation/chinese-confusion-pairs/pronunciation-variants.jsonl",
+  "summary": "outputs/pronunciation/chinese-confusion-pairs/summary.json"
+}

@@ -1,0 +1,33 @@
+{
+  "engine": "qwen3-tts",
+  "model": "D:\\models\\Qwen3-TTS-12Hz-0.6B-CustomVoice",
+  "device": "cuda:0",
+  "dtype": "bfloat16",
+  "speakers": [
+    {
+      "name": "Vivian",
+      "tags": ["speaker:vivian", "voice:female", "source:qwen-custom-voice"]
+    }
+  ],
+  "instructions": [
+    {
+      "name": "none",
+      "tags": ["delivery:default"]
+    },
+    {
+      "name": "neutral",
+      "instruct": "Speak in a natural, clear meeting voice.",
+      "tags": ["delivery:neutral", "clarity:clear", "scene:meeting"]
+    },
+    {
+      "name": "fast",
+      "instruct": "Speak clearly at a slightly fast pace.",
+      "tags": ["delivery:neutral", "clarity:clear", "pace:fast"]
+    },
+    {
+      "name": "conversational",
+      "instruct": "Speak in a natural, relaxed, conversational tone.",
+      "tags": ["delivery:conversational", "style:relaxed"]
+    }
+  ]
+}

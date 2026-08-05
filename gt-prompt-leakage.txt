@@ -1,0 +1,17 @@
+# CosyVoice prompt-leakage regression set.
+# First field is the TTS text; remaining fields are known leaked ASR outputs.
+ZW版本|不要添加其他内容|V W版本|Z W版本|VW版本|C W版本|CW版本
+BOE|B O E|别添加其他内容BO|别又添加其他内容BO|BO添加其他内容BO|别又添加其他内容do
+利旧|历旧|例旧|比右添加其他内容|李舅|李就|李旧|立旧|笔右添加其他内容|你就
+CT会议|无意添加其他内容|C T会议|基地会议|CT 회|C T会|CT会|CT คุย|GT会议|G T会议
+系统设计|不要添加其他内容
+LLM|L L M|l添加其他内容|L M|N M
+EulerOS|Eula Rose|Oileros|Oloroso|我要您替他内容We are out|尤里奥斯|Oilerous|我有您其他内容We are all|Oiler house|Oleroso|油辣椒|Oleros|我有您其他内容We are out|尤丽珠|Oil rouse|Oil or out|Boilerous|Yoleroos|Yoeleros|Yoeler O S
+VP98X0-T|VP ninety eight X zero T|我要添加其他内容VP ninety eight X zero T|P key ninety eight x zero t|We key ninety eight x zero t|V P ninety eight X zero T|B key ninety eight x zero t
+VP99国产加速卡|VP九十九国产加速卡|不要添加其他内容VP九十九国产加速卡|V T九十九国产加速卡
+POC测试|铺要添加其他内容POC测试|D O C测试|POC措施
+SDK|استيكه|不要添加其他内人|S D K|استيقن|अस्तिक है|Asli ke|Asdk|استيقظ|As dikke|巴西克|阿斯蒂克
+TR1|PR One|TR One|TR one不要添加|P R one|T R one|기아원|HR One|Here are one
+RSE6600|RSE six thousand six hundred|R S E six thousand six hundred|R S John其他内容|RSC six thousand six hundred
+EOS|US|BO添加其他内容|Beless|ios|EO添加其他内容|Beavis|Elus|Fearless|Bless
+log梅尔|不要添加其他内容log没|唠个美尔|洛格梅尔|Lock梅尔|洛克梅尔|Log Mayer|Look梅尔|唠个煤耳

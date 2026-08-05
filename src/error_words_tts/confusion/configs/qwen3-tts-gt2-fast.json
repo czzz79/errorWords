@@ -1,0 +1,16 @@
+{
+  "input_txt": "gt2.txt",
+  "engine_config": "src/error_words_tts/tts/configs/qwen3-tts.json",
+  "output_dir": "outputs/confusion/qwen3-tts-gt2-fast",
+  "sample_language": "Auto",
+  "include_original_audio": true,
+  "include_known_confusions": false,
+  "augmentation": {
+    "enabled": false
+  },
+  "asr": {
+    "service": {
+      "manage": false
+    }
+  }
+}

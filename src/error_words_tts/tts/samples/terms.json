@@ -1,0 +1,12 @@
+[
+  {"id": "zh_product", "text": "请打开小红书。", "language": "Chinese", "tags": ["chinese", "product"]},
+  {"id": "zh_technical", "text": "这个方案需要使用向量数据库。", "language": "Chinese", "tags": ["chinese", "technical"]},
+  {"id": "zh_name", "text": "请把会议纪要发给张三。", "language": "Chinese", "tags": ["chinese", "name"]},
+  {"id": "zh_platform", "text": "我们下周讨论飞书妙记的接口。", "language": "Chinese", "tags": ["chinese", "platform"]},
+  {"id": "zh_abbreviation", "text": "这个指标要看转化率。", "language": "Chinese", "tags": ["chinese", "business"]},
+  {"id": "en_product", "text": "Please open the LangGraph workflow.", "language": "English", "tags": ["english", "product"]},
+  {"id": "en_acronym", "text": "The RAG pipeline is ready.", "language": "English", "tags": ["english", "acronym"]},
+  {"id": "en_version", "text": "Please deploy version GPT-4.1 today.", "language": "English", "tags": ["english", "version"]},
+  {"id": "mixed_rag", "text": "我们使用 RAG 完成知识库问答。", "language": "Auto", "tags": ["mixed", "acronym"]},
+  {"id": "mixed_cosyvoice", "text": "请用 CosyVoice 生成一段测试音频。", "language": "Auto", "tags": ["mixed", "model"]}
+]

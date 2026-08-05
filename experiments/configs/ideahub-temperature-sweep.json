@@ -1,0 +1,19 @@
+{
+  "description": "72 条既有 CosyVoice IdeaHub 音频：4 档 temperature，每档 3 次。",
+  "input_txt": "resources/ideahub.txt",
+  "candidate_terms_txt": "resources/ideahub_confusion_terms.txt",
+  "output_dir": "outputs/experiments/ideahub-temperature-sweep",
+  "stages": {"pronunciation": false, "tts": false, "augmentation": false, "asr": true, "report": true, "dictionary_postprocess": false},
+  "asr": {
+    "input_manifests": ["outputs/confusion/cosyvoice3/asr-input-manifest.jsonl", "outputs/confusion/cosyvoice3-gt3-short-six-styles/asr-input-manifest.jsonl"],
+    "filter_text": "IdeaHub", "expected_input_rows": 72,
+    "workers": 1, "language": null, "prompt": null, "timeout_seconds": 180, "wait_seconds": 300, "repeats": 3,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name": "temperature-0.00", "temperature": 0.0, "top_p": 0.95, "top_k": 50, "min_p": 0.05, "seed": null},
+      {"name": "temperature-0.15", "temperature": 0.15, "top_p": 0.95, "top_k": 50, "min_p": 0.05, "seed": null},
+      {"name": "temperature-0.35", "temperature": 0.35, "top_p": 0.95, "top_k": 50, "min_p": 0.05, "seed": null},
+      {"name": "temperature-0.55", "temperature": 0.55, "top_p": 0.95, "top_k": 50, "min_p": 0.05, "seed": null}
+    ]
+  }
+}

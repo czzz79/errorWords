@@ -1,0 +1,15 @@
+{
+  "input_txt": "gt-prompt-leakage.txt",
+  "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-short-six-styles.json",
+  "output_dir": "outputs/confusion/cosyvoice3-prompt-leakage-short-six-styles",
+  "include_original_audio": true,
+  "augmentation": {
+    "enabled": false
+  },
+  "asr": {
+    "workers": 1,
+    "service": {
+      "manage": true
+    }
+  }
+}

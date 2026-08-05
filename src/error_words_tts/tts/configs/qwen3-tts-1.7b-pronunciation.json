@@ -1,0 +1,40 @@
+{
+  "engine": "qwen3-tts",
+  "mode": "voice_design",
+  "batch_size": 4,
+  "model": "D:\\models\\Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+  "device": "cuda:0",
+  "dtype": "bfloat16",
+  "instructions": [
+    {
+      "name": "young_female_neutral",
+      "instruct": "A young adult woman with a bright, natural voice, speaking at a normal conversational pace in a neutral tone.",
+      "tags": ["identity:female", "age:young-adult", "timbre:bright", "pace:medium", "tone:neutral"]
+    },
+    {
+      "name": "middle_aged_male_neutral",
+      "instruct": "A middle-aged man with a deep, warm voice, speaking at a normal conversational pace in a neutral tone.",
+      "tags": ["identity:male", "age:middle-aged", "timbre:deep", "timbre:warm", "pace:medium", "tone:neutral"]
+    },
+    {
+      "name": "mature_female_neutral",
+      "instruct": "A mature woman with a smooth, natural voice, speaking at a normal conversational pace in a neutral tone.",
+      "tags": ["identity:female", "age:mature", "timbre:smooth", "pace:medium", "tone:neutral"]
+    },
+    {
+      "name": "young_male_fast_slurred",
+      "instruct": "A young man speaking quickly in casual conversation. Use intentionally unclear, slurred articulation with connected syllables and lightly swallowed endings, while saying exactly the provided text without adding or correcting words.",
+      "tags": ["identity:male", "age:young-adult", "pace:fast", "clarity:unclear", "articulation:slurred", "ending:reduced"]
+    },
+    {
+      "name": "middle_aged_female_mumbled",
+      "instruct": "A middle-aged woman speaking in a low, distracted meeting voice. Make the pronunciation intentionally somewhat mumbled and indistinct, with weak consonants and reduced unstressed syllables, while preserving the provided wording.",
+      "tags": ["identity:female", "age:middle-aged", "volume:low", "clarity:unclear", "articulation:mumbled", "syllable:reduced"]
+    },
+    {
+      "name": "older_male_soft_trailing",
+      "instruct": "An older man speaking softly and casually with imprecise articulation. Let word-final sounds trail off and become difficult to hear, but do not intentionally replace the provided text with different words.",
+      "tags": ["identity:male", "age:older", "volume:soft", "clarity:unclear", "articulation:imprecise", "ending:trailing"]
+    }
+  ]
+}

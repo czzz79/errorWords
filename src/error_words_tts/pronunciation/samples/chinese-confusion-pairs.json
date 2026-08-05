@@ -1,0 +1,46 @@
+[
+  {
+    "id": "zhiwei",
+    "canonical_text": "志伟",
+    "text": "志伟",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:周也"],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["zhi4", "wei3"]
+    }
+  },
+  {
+    "id": "zheyangzi",
+    "canonical_text": "这样子",
+    "text": "这样子",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:张娜"],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["zhe4", "yang4", "zi3"]
+    }
+  },
+  {
+    "id": "neiqian",
+    "canonical_text": "内嵌",
+    "text": "内嵌",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:内墙"],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["nei4", "qian4"]
+    }
+  },
+  {
+    "id": "chenzhao",
+    "canonical_text": "陈赵",
+    "text": "陈赵",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:陈照"],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["chen2", "zhao4"]
+    }
+  }
+]

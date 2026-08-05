@@ -1,0 +1,17 @@
+{
+  "description": "72 条 CosyVoice 音频的 8 组联合采样条件。",
+  "input_txt": "resources/ideahub.txt", "candidate_terms_txt": "resources/ideahub_confusion_terms.txt", "output_dir": "outputs/experiments/ideahub-cosy-combo",
+  "stages": {"pronunciation": false, "tts": false, "augmentation": false, "asr": true, "report": true, "dictionary_postprocess": false},
+  "asr": {"input_manifests": ["outputs/confusion/cosyvoice3/asr-input-manifest.jsonl", "outputs/confusion/cosyvoice3-gt3-short-six-styles/asr-input-manifest.jsonl"], "filter_text":"IdeaHub", "expected_input_rows":72, "workers": 1, "repeats": 3, "timeout_seconds": 180, "wait_seconds": 300,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name":"baseline", "temperature":0.55,"top_p":0.95,"top_k":50,"min_p":0.05,"seed":null},
+      {"name":"combo-t065-p090-mp005", "temperature":0.65,"top_p":0.9,"top_k":50,"min_p":0.05,"seed":null},
+      {"name":"combo-t065-p100-mp000", "temperature":0.65,"top_p":1.0,"top_k":50,"min_p":0.0,"seed":null},
+      {"name":"combo-t080-p090-mp005", "temperature":0.8,"top_p":0.9,"top_k":50,"min_p":0.05,"seed":null},
+      {"name":"combo-t080-p095-mp005", "temperature":0.8,"top_p":0.95,"top_k":50,"min_p":0.05,"seed":null},
+      {"name":"combo-t080-p100-mp000", "temperature":0.8,"top_p":1.0,"top_k":50,"min_p":0.0,"seed":null},
+      {"name":"combo-t100-p095-mp005", "temperature":1.0,"top_p":0.95,"top_k":50,"min_p":0.05,"seed":null},
+      {"name":"combo-t100-p100-mp000", "temperature":1.0,"top_p":1.0,"top_k":50,"min_p":0.0,"seed":null}
+    ]}
+}

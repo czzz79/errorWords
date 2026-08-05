@@ -1,0 +1,13 @@
+{
+  "input_manifest": "outputs/tts/chinese-confusion-pairs-qwen-baseline/manifest.jsonl",
+  "output_dir": "outputs/augmentation/chinese-confusion-pairs-low-cost",
+  "seed": 20260717,
+  "continue_on_error": true,
+  "perturbations": [
+    {"name": "speed-090", "type": "speed", "factor": 0.9},
+    {"name": "speed-110", "type": "speed", "factor": 1.1},
+    {"name": "noise-18db", "type": "white_noise", "snr_db": 18},
+    {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+    {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "description": "GT3 数字读法子类全管线：57 个术语、67 个 GT 词对；生成 canonical 与中文逐位、中文幺式、中文基数三种定向数字读法，使用 CosyVoice 六种说话方式，不叠加音频扰动，随后运行一档 Qwen3-ASR 解码。",
+  "input_txt": "resources/gt3-by-type/number-reading-mixed.txt",
+  "output_dir": "outputs/experiments/gt3-number-reading-cosy-full",
+  "sample_language": "Auto",
+  "include_known_confusions": false,
+  "stages": {
+    "pronunciation": true,
+    "tts": true,
+    "augmentation": true,
+    "asr": true,
+    "report": true,
+    "dictionary_postprocess": false
+  },
+  "pronunciation": {
+    "mode": "gt_directed",
+    "target_categories": ["number_reading_mixed"]
+  },
+  "tts": {
+    "runs": [
+      {
+        "name": "cosyvoice",
+        "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe",
+        "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-pronunciation.json"
+      }
+    ]
+  },
+  "augmentation": {
+    "include_original_audio": true,
+    "seed": 20260803,
+    "continue_on_error": true,
+    "perturbations": []
+  },
+  "asr": {
+    "workers": 1,
+    "language": null,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 1,
+    "service": {
+      "mode": "managed",
+      "distribution": "Ubuntu-24.04",
+      "working_directory": "/home/jsqdc/qwen3-asr",
+      "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python",
+      "base_config": "config/service-ideahub-random.yaml",
+      "host": "127.0.0.1",
+      "port": 8756
+    },
+    "conditions": [
+      {
+        "name": "number-mining-t065-p100-k050-mp000",
+        "temperature": 0.65,
+        "top_p": 1.0,
+        "top_k": 50,
+        "min_p": 0.0,
+        "seed": null
+      }
+    ]
+  }
+}

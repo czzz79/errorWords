@@ -1,0 +1,67 @@
+TR6|TR六
+TR6|T R六
+TR5|TR五
+board 2|board二
+IdeaHub ES2|IdeaHub ES 二
+Ideahub S3|IdeaHub S 三
+Ideahub S2|IdeaHub S 二
+基于V900|基于V九百
+明年Q2|明年Q二
+Camera200|Camera两百
+Box300|box三百
+9900|九九零零
+9900|990
+RSE9900|rse九九零零
+E2E|e二e
+MFR4|MFR四
+K3|K三
+25B|二十五B
+25B|二五B
+26A|二十六A
+26A|二六A
+7B|七B
+Box610|Box六幺零
+Box610|box 六幺零
+80PIN USB|八十pin USB
+9960|九九六零
+9950|九九五零
+9930|九九三零
+9920|九九二零
+VP99国产加速卡|V P 九九国产加速卡
+ES2Pro NR|e s two pro n r
+DTR1评审|D.T.R.一评审
+310P|三幺零P
+310P|三零P
+VC 25版本|VC二十五版本
+IO3模组|I O三模组
+910|九幺零
+8D分析|八D分析
+IdeaHub K3|Idea Hub K三
+25A|二五A
+25A|二十五A
+9000C|九千C
+23B|二十三b
+24A|二十四a
+24B|二十四b
+910B|九幺零B
+910B|九二零B
+35B|三十五B
+32B|三十二B
+30B|三十B
+ResNet34|ResNet三四
+S3|S三
+H1|H一
+H1|H幺
+H2|H二
+330|三三零
+26B|二十六B
+26B|二六B
+一线543|一线五三
+543|五四三
+2012|二零一二
+4K60|四K六零
+1人月|亿人月
+610|六幺零
+310|三幺零
+Box310|box三幺零
+4K|四K

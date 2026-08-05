@@ -1,0 +1,39 @@
+{
+  "engine": "qwen3-tts",
+  "mode": "voice_design",
+  "model": "D:\\models\\Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+  "device": "cuda:0",
+  "dtype": "bfloat16",
+  "instructions": [
+    {
+      "name": "young_female_clear",
+      "instruct": "A young adult woman with a bright, clear, professional voice. Speak at a natural medium pace with crisp articulation and a calm, neutral tone. Pronounce the English product name naturally.",
+      "tags": ["identity:female", "age:young-adult", "timbre:bright", "clarity:clear", "pace:medium", "tone:neutral"]
+    },
+    {
+      "name": "middle_aged_male_deep_slow",
+      "instruct": "A middle-aged man with a deep, warm, resonant voice. Speak slightly slowly and deliberately, with steady pacing, clear articulation, and a calm, confident tone.",
+      "tags": ["identity:male", "age:middle-aged", "timbre:deep", "timbre:warm", "pace:slow", "tone:calm"]
+    },
+    {
+      "name": "young_male_energetic_fast",
+      "instruct": "A young adult man with a fresh, energetic, slightly bright voice. Speak clearly at a moderately fast pace with lively intonation and an upbeat tone.",
+      "tags": ["identity:male", "age:young-adult", "timbre:bright", "pace:fast", "tone:energetic"]
+    },
+    {
+      "name": "mature_female_conversational",
+      "instruct": "A mature woman with a warm, smooth voice. Speak in a relaxed conversational manner at a natural pace, with gentle intonation and friendly confidence.",
+      "tags": ["identity:female", "age:mature", "timbre:warm", "pace:medium", "tone:conversational"]
+    },
+    {
+      "name": "older_male_rough_deliberate",
+      "instruct": "An older man with a low, slightly rough and textured voice. Speak deliberately at a medium-slow pace, with firm articulation and a serious, composed tone.",
+      "tags": ["identity:male", "age:older", "timbre:rough", "pitch:low", "pace:medium-slow", "tone:serious"]
+    },
+    {
+      "name": "young_female_soft_gentle",
+      "instruct": "A young woman with a soft, light, gentle voice. Speak quietly and slightly slowly, with smooth phrasing, careful pronunciation, and a friendly reassuring tone.",
+      "tags": ["identity:female", "age:young-adult", "timbre:soft", "volume:quiet", "pace:slow", "tone:gentle"]
+    }
+  ]
+}

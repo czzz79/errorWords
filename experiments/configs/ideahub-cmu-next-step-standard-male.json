@@ -1,0 +1,30 @@
+{
+  "description": "IdeaHub CMU 下一阶段：标准成人男声基线。只生成标准 CMU 发音的 clean WAV，不运行扰动或 ASR。",
+  "input_txt": "resources/pronunciation/ideahub-cmu-next-step.txt",
+  "output_dir": "outputs/experiments/ideahub-cmu-next-step",
+  "output_readme": "# IdeaHub CMU next-step baseline\n\nPurpose: create one standard, clean adult-male IdeaHub audio before any new CMU perturbation experiments.\n\nPronunciation: `[AY0][D][IY1][AH0] [HH][AH1][B]`.\n\nVoice: local CosyVoice3 `cross_lingual_prompt.wav`, acoustic median F0 approximately 147 Hz (adult-male range).\n\nThis run performs pronunciation + TTS only; no augmentation or ASR is run.\n",
+  "sample_language": "English",
+  "stages": {
+    "pronunciation": true,
+    "tts": true,
+    "augmentation": false,
+    "asr": false,
+    "report": false,
+    "dictionary_postprocess": false
+  },
+  "pronunciation": {
+    "mode": "english_cmu",
+    "rules_path": "src/error_words_tts/pronunciation/rules/english-cmu.json",
+    "overrides_path": "resources/pronunciation/english-pronunciation-overrides.json",
+    "baseline_only": true
+  },
+  "tts": {
+    "runs": [
+      {
+        "name": "cosyvoice3-male-standard",
+        "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe",
+        "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-cmu-male-standard-clear.json"
+      }
+    ]
+  }
+}

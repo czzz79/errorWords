@@ -1,0 +1,23 @@
+{
+  "description": "三条个人 IdeaHub 录音与两条 CosyVoice 男声对照音频的 ASR 语言提示矩阵。每档重复三次，比较自动、固定英文与固定中文请求的输出及随机性。",
+  "input_txt": "resources/pronunciation/ideahub-cmu-next-step.txt",
+  "output_dir": "outputs/experiments/ideahub-personal-voice-asr-language-matrix",
+  "output_readme": "# IdeaHub personal-voice ASR language matrix\n\nInput: three supplied personal recordings (`7.m4a`, `8.m4a`, `9.m4a`) plus the generated standard-male spaced and connected CMU WAVs.\n\nTest: Qwen3-ASR under auto, fixed English, and fixed Chinese language hints. Each condition is repeated three times with `seed: null`, so decoding variability is observable.\n\nNo TTS or audio augmentation is run. The managed WSL service is stopped after each condition.\n",
+  "sample_language": "English",
+  "stages": {"pronunciation": false, "tts": false, "augmentation": false, "asr": true, "report": true, "dictionary_postprocess": false},
+  "asr": {
+    "input_manifests": ["experiments/manifests/ideahub-personal-and-male-audio.jsonl"],
+    "expected_input_rows": 5,
+    "workers": 1,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 3,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name": "auto-t065-p100-k050-mp000", "language": null, "prompt": null, "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null},
+      {"name": "english-t065-p100-k050-mp000", "language": "en", "prompt": null, "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null},
+      {"name": "chinese-t065-p100-k050-mp000", "language": "zh", "prompt": null, "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  }
+}

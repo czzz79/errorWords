@@ -1,0 +1,35 @@
+{
+  "term_count": 951,
+  "pair_count": 1202,
+  "preprocessable_pair_count": 937,
+  "category_counts": {
+    "normalization_alias": 69,
+    "number_reading_mixed": 67,
+    "cross_language_transliteration": 255,
+    "english_word_acronym": 223,
+    "zh_same_pinyin": 168,
+    "zh_single_syllable": 224,
+    "zh_multi_syllable_near": 86,
+    "zh_distant_semantic": 32,
+    "other_review": 78
+  },
+  "category_files": {
+    "normalization_alias": "normalization-alias.txt",
+    "number_reading_mixed": "number-reading-mixed.txt",
+    "cross_language_transliteration": "cross-language-transliteration.txt",
+    "english_word_acronym": "english-word-acronym.txt",
+    "zh_same_pinyin": "zh-same-pinyin.txt",
+    "zh_single_syllable": "zh-single-syllable.txt",
+    "zh_multi_syllable_near": "zh-multi-syllable-near.txt",
+    "zh_distant_semantic": "zh-distant-semantic.txt",
+    "other_review": "other-review.txt"
+  },
+  "preprocessable_categories": [
+    "cross_language_transliteration",
+    "english_word_acronym",
+    "number_reading_mixed",
+    "zh_same_pinyin",
+    "zh_single_syllable"
+  ],
+  "classification_details": "C:\\Users\\jsqdc\\Desktop\\workspace\\errorWords\\resources\\gt3-by-type\\classification.jsonl"
+}

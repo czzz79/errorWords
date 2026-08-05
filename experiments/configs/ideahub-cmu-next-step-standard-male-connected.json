@@ -1,0 +1,33 @@
+{
+  "description": "IdeaHub 标准成人男声连读对照：仅连接 CamelCase 的 Idea|Hub 边界，其他读法、音色和指令与标准基线完全相同。",
+  "input_txt": "resources/pronunciation/ideahub-cmu-next-step.txt",
+  "output_dir": "outputs/experiments/ideahub-cmu-next-step-standard-male-connected",
+  "output_readme": "# IdeaHub standard male — connected boundary\n\nPurpose: compare a connected Idea|Hub boundary against the standard male baseline.\n\nPronunciation: `[AY0][D][IY1][AH0][HH][AH1][B]`. The CamelCase boundary is represented as `connected`, so there is no explicit separator between the two phone groups.\n\nThis run performs pronunciation + TTS only; no augmentation or ASR is run.\n",
+  "sample_language": "English",
+  "stages": {
+    "pronunciation": true,
+    "tts": true,
+    "augmentation": false,
+    "asr": false,
+    "report": false,
+    "dictionary_postprocess": false
+  },
+  "pronunciation": {
+    "mode": "english_cmu",
+    "rules_path": "src/error_words_tts/pronunciation/rules/english-cmu.json",
+    "overrides_path": "resources/pronunciation/english-pronunciation-overrides.json",
+    "baseline_only": true,
+    "boundary_modes": {
+      "camel_case": "connected"
+    }
+  },
+  "tts": {
+    "runs": [
+      {
+        "name": "cosyvoice3-male-standard",
+        "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe",
+        "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-cmu-male-standard-clear.json"
+      }
+    ]
+  }
+}

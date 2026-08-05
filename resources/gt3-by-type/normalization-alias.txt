@@ -1,0 +1,69 @@
+IdeaHub|Idea Hub
+IdeaHub|I D E A Hub
+IdeaUI|Idea UI
+IdeaShare|idea share
+PO|P O
+GA|G A
+JIC|J I C
+DRMOS|DR MOS
+IPMT|i p m t
+RSE|R S E
+RSE|RS E
+CPRO|C P R O
+BCM|B C M
+IdeaManager|Idea Manager
+CloudVC|Cloud VC
+PE|P E
+SMC|S M C
+ASR|A S R
+BOE|b o e
+VideoBar|video bar
+RAT|R A T
+APP|A P P
+MCU|M C U
+EDCP|e d c p
+ADCP|A D C P
+QA|Q A
+ESOP|E S O P
+LLM|L L M
+GLM|G L M
+OA|O A
+FEC|F E C
+ARQ|A R Q
+PLC|P L C
+OCR|O C R
+MO|M O
+toB端|To B端
+AgentSkill|agent skill
+CloudLink Endpoints|Cloud Link Endpoints
+OpenCode|Open code
+CodeWiki|Code wiki
+CodeAgent|Code agent
+CloudVDC|Cloud VDC
+VC平台|V C平台
+CMC|C M C
+SDK|S D K
+TTS|T T S
+TRIZ|T R I Z
+WeLink|we link
+SVT全量测试|svt 全量测试
+OPS|O P S
+MTR|M T R
+PL|P L
+PM|P M
+PDU|P D U
+HR|H R
+EDLA|edl a
+VC AI|VCAI
+VLLM-Ascend|V L L M ascend
+CloudMCU|Cloud MCU
+Spart|S part
+OSD|O S D
+ToB|To B
+ToC|To C
+SE|S E
+Idealink|Idea Link
+IoT|I O T
+EOP|E O P
+MAXHUB|Max Hub
+ICSL送检|I C S L送检

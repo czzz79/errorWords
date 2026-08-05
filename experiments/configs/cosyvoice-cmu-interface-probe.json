@@ -1,0 +1,22 @@
+{
+  "description": "CosyVoice3 CMU 接口 probe：普通文本、标准 CMU 与单个 CMU 扰动，验证 text_frontend=false 的实际音频与 ASR 输出。",
+  "input_txt": "resources/pronunciation/cosyvoice-cmu-probe.txt",
+  "output_dir": "outputs/experiments/cosyvoice-cmu-interface-probe",
+  "output_readme": "# CosyVoice CMU interface probe\n\nTerms: Box, CosyVoice, IdeaUI. Each receives a normal-text baseline, a standard-CMU baseline and selected single CMU perturbations.\n\nPurpose: validate that CosyVoice consumes `phoneme_text` with `text_frontend=false` before the full English clean experiment.\n\nNo audio augmentation is used.",
+  "sample_language": "English",
+  "include_known_confusions": false,
+  "stages": {"pronunciation": true, "tts": true, "augmentation": true, "asr": true, "report": true, "dictionary_postprocess": false},
+  "pronunciation": {
+    "mode": "english_cmu",
+    "include_text_baseline": true,
+    "enabled_rules": ["en.final_cluster_delete_penultimate", "en.final_schwa_deletion", "en.consonant.v_to_w"],
+    "max_variants_per_term": 12
+  },
+  "tts": {"runs": [{"name": "cosyvoice-cmu", "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe", "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-cmu-neutral-clear.json"}]},
+  "augmentation": {"include_original_audio": true, "seed": 20260804, "continue_on_error": false, "perturbations": []},
+  "asr": {
+    "workers": 1, "language": null, "prompt": null, "timeout_seconds": 180, "wait_seconds": 300, "continue_on_error": false, "repeats": 1,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [{"name": "cmu-probe-t065-p100-k050-mp000", "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}]
+  }
+}

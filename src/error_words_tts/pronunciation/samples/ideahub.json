@@ -1,0 +1,12 @@
+[
+  {
+    "id": "ideahub",
+    "canonical_text": "IdeaHub",
+    "text": "idea hub",
+    "language": "English",
+    "tags": ["english", "term", "standalone", "no-context"],
+    "pronunciation": {
+      "tokens": ["idea", "hub"]
+    }
+  }
+]

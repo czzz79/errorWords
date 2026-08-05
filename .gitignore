@@ -1,0 +1,17 @@
+# Pipeline outputs and local caches
+/outputs/
+/.pytest_cache/
+/__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Runtime logs and machine-local configuration
+*.launcher.*.log
+*.log
+.env
+.env.*
+
+# External source dependency.  Its pinned revision is documented in
+# TRANSFER.md and should be mirrored or cloned separately in the intranet.
+/third_party/CosyVoice/

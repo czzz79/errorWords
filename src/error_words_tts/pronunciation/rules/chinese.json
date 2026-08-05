@@ -1,0 +1,51 @@
+[
+  {
+    "rule_id": "zh.initial_n_l",
+    "language": "chinese",
+    "operation": "zh_initial_n_l",
+    "tags": ["initial:confusion", "pair:n-l"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "zh.retroflex_flattening",
+    "language": "chinese",
+    "operation": "zh_retroflex_flattening",
+    "tags": ["initial:confusion", "retroflex:flattened"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "zh.nasal_final_confusion",
+    "language": "chinese",
+    "operation": "zh_nasal_final_confusion",
+    "tags": ["final:confusion", "nasal:front-back"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "zh.nasal_final_weakening",
+    "language": "chinese",
+    "operation": "zh_nasal_final_weakening",
+    "tags": ["final:weakening", "nasal:deleted"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "zh.tone_substitution",
+    "language": "chinese",
+    "operation": "zh_tone_substitution",
+    "tags": ["tone:substitution", "articulation:variable"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "zh.tone_neutralization",
+    "language": "chinese",
+    "operation": "zh_tone_neutralization",
+    "tags": ["tone:neutralized", "articulation:reduced"],
+    "tts_renderability": "phoneme_required"
+  },
+  {
+    "rule_id": "zh.syllable_deletion",
+    "language": "chinese",
+    "operation": "zh_syllable_deletion",
+    "tags": ["syllable:deletion", "pace:fast"],
+    "tts_renderability": "text_approximation"
+  }
+]

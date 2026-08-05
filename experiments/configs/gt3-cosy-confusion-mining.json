@@ -1,0 +1,24 @@
+{
+  "description": "全量 GT3 CosyVoice 混淆词挖掘：复用既有 34,224 条可用音频；采用兼顾随机性与稳定性的联合采样条件，仅运行一次。",
+  "input_txt": "gt3.txt",
+  "output_dir": "outputs/experiments/gt3-cosy-confusion-mining",
+  "include_known_confusions": false,
+  "stages": {"pronunciation": false, "tts": false, "augmentation": false, "asr": true, "report": true, "dictionary_postprocess": true},
+  "asr": {
+    "input_manifests": ["outputs/confusion/cosyvoice3-gt3-short-six-styles/asr-input-manifest.jsonl"],
+    "ready_only": true,
+    "expected_input_rows": 34224,
+    "workers": 1,
+    "language": null,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 1,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name": "mining-t065-p100-k050-mp000", "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  },
+  "dictionary_postprocess": {}
+}

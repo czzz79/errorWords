@@ -1,0 +1,34 @@
+{
+  "engine": "cosyvoice3",
+  "prompt_version": "cosyvoice3-official-v1-gt2",
+  "workers": 1,
+  "model_dir": "D:\\models\\Fun-CosyVoice3-0.5B-2512",
+  "repo_dir": "C:\\Users\\jsqdc\\Desktop\\workspace\\errorWords\\third_party\\CosyVoice",
+  "prompt_wav": "C:\\Users\\jsqdc\\Desktop\\workspace\\errorWords\\third_party\\CosyVoice\\asset\\zero_shot_prompt.wav",
+  "prompt_text": "You are a helpful assistant.<|endofprompt|>希望你以后能够做的比我还好呦。",
+  "voice": {
+    "name": "reference",
+    "tags": ["voice:reference", "source:prompt-wav", "transport:local"]
+  },
+  "instructions": [
+    {
+      "name": "base_zero_shot",
+      "tags": ["control:none", "prompt:zero-shot"]
+    },
+    {
+      "name": "official_fast",
+      "instruct": "You are a helpful assistant. 请用尽可能快地语速说一句话。<|endofprompt|>",
+      "tags": ["control:official", "pace:fast"]
+    },
+    {
+      "name": "official_soft",
+      "instruct": "You are a helpful assistant. Please say a sentence in a very soft voice.<|endofprompt|>",
+      "tags": ["control:official", "volume:soft"]
+    },
+    {
+      "name": "official_emotion",
+      "instruct": "You are a helpful assistant. 请非常开心地说一句话。<|endofprompt|>",
+      "tags": ["control:official", "emotion:happy"]
+    }
+  ]
+}

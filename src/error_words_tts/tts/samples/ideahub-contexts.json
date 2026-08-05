@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ideahub_standalone",
+    "text": "ideahub",
+    "language": "English",
+    "tags": ["english", "term", "standalone"]
+  },
+  {
+    "id": "ideahub_mixed",
+    "text": "请打开 ideahub。",
+    "language": "Auto",
+    "tags": ["mixed", "term"]
+  },
+  {
+    "id": "ideahub_context",
+    "text": "我们在 ideahub 里管理会议任务。",
+    "language": "Auto",
+    "tags": ["mixed", "term", "context"]
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "chenghong",
+    "canonical_text": "程宏",
+    "text": "程宏",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:陈红"],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["cheng2", "hong2"]
+    }
+  },
+  {
+    "id": "zhongduan",
+    "canonical_text": "终端",
+    "text": "终端",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:中端"],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["zhong1", "duan1"]
+    }
+  },
+  {
+    "id": "sinan",
+    "canonical_text": "司南",
+    "text": "司南",
+    "language": "Chinese",
+    "tags": [
+      "chinese",
+      "term",
+      "gt",
+      "reference-confusion:思南",
+      "reference-confusion:四南",
+      "reference-confusion:思兰",
+      "reference-confusion:四奶"
+    ],
+    "pronunciation": {
+      "alphabet": "pinyin-tone3",
+      "syllables": ["si1", "nan2"]
+    }
+  },
+  {
+    "id": "qab",
+    "canonical_text": "QAB",
+    "text": "Q A B",
+    "language": "English",
+    "tags": [
+      "english",
+      "acronym",
+      "gt",
+      "reference-confusion:KTV",
+      "reference-confusion:QUB",
+      "reference-confusion:Q币",
+      "reference-confusion:TAB"
+    ],
+    "pronunciation": {
+      "alphabet": "arpabet",
+      "override_tokens": [
+        {"text": "Q", "phonemes": ["K", "Y", "UW1"]},
+        {"text": "A", "phonemes": ["EY1"]},
+        {"text": "B", "phonemes": ["B", "IY1"]}
+      ]
+    }
+  }
+]

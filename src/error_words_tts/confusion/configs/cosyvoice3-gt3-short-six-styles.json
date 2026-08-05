@@ -1,0 +1,20 @@
+{
+  "input_txt": "gt3.txt",
+  "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-pronunciation.json",
+  "output_dir": "outputs/confusion/cosyvoice3-gt3-short-six-styles",
+  "sample_language": "Auto",
+  "include_original_audio": true,
+  "include_known_confusions": false,
+  "augmentation": {
+    "enabled": true,
+    "seed": 20260717,
+    "continue_on_error": true,
+    "perturbations": [
+      {"name": "speed-090", "type": "speed", "factor": 0.9},
+      {"name": "speed-110", "type": "speed", "factor": 1.1},
+      {"name": "noise-18db", "type": "white_noise", "snr_db": 18},
+      {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+      {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+    ]
+  }
+}

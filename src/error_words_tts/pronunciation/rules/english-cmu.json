@@ -1,0 +1,22 @@
+[
+  {"rule_id": "en.final_schwa_deletion", "level": "phoneme", "operation": "final_schwa_deletion", "confidence": "high", "rule_source": "english_reduction"},
+  {"rule_id": "en.final_cluster_delete_penultimate", "level": "phoneme", "operation": "final_cluster_delete_penultimate", "confidence": "medium", "rule_source": "english_cluster_reduction"},
+  {"rule_id": "en.final_stop_devoicing.b_to_p", "level": "phoneme", "operation": "final_substitution", "source": "B", "target": "P", "confidence": "high", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.final_stop_devoicing.d_to_t", "level": "phoneme", "operation": "final_substitution", "source": "D", "target": "T", "confidence": "high", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.final_stop_devoicing.g_to_k", "level": "phoneme", "operation": "final_substitution", "source": "G", "target": "K", "confidence": "high", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.vowel_reduction.ae0_to_ah0", "level": "phoneme", "operation": "substitution", "source": "AE0", "target": "AH0", "confidence": "medium", "rule_source": "english_reduction"},
+  {"rule_id": "en.vowel_reduction.eh0_to_ah0", "level": "phoneme", "operation": "substitution", "source": "EH0", "target": "AH0", "confidence": "medium", "rule_source": "english_reduction"},
+  {"rule_id": "en.vowel_reduction.ih0_to_ah0", "level": "phoneme", "operation": "substitution", "source": "IH0", "target": "AH0", "confidence": "medium", "rule_source": "english_reduction"},
+  {"rule_id": "en.vowel_reduction.iy0_to_ih0", "level": "phoneme", "operation": "substitution", "source": "IY0", "target": "IH0", "confidence": "medium", "rule_source": "english_reduction"},
+  {"rule_id": "en.h_deletion", "level": "phoneme", "operation": "initial_deletion", "source": "HH", "confidence": "low", "rule_source": "english_reduction"},
+  {"rule_id": "en.consonant.v_to_w", "level": "phoneme", "operation": "substitution", "source": "V", "target": "W", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.th_to_s", "level": "phoneme", "operation": "substitution", "source": "TH", "target": "S", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.th_to_t", "level": "phoneme", "operation": "substitution", "source": "TH", "target": "T", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.dh_to_d", "level": "phoneme", "operation": "substitution", "source": "DH", "target": "D", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.r_to_l", "level": "phoneme", "operation": "substitution", "source": "R", "target": "L", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.l_to_r", "level": "phoneme", "operation": "substitution", "source": "L", "target": "R", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.b_to_p", "level": "phoneme", "operation": "substitution", "source": "B", "target": "P", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.consonant.d_to_t", "level": "phoneme", "operation": "substitution", "source": "D", "target": "T", "confidence": "medium", "rule_source": "mandarin_l2_english"},
+  {"rule_id": "en.letter_spelling", "level": "reading_mode", "operation": "letter_spelling", "confidence": "medium", "rule_source": "canonical_text"},
+  {"rule_id": "en.connected_boundary", "level": "boundary", "operation": "connected_boundary", "confidence": "low", "rule_source": "boundary_variation"}
+]

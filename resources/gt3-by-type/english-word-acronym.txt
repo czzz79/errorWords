@@ -1,0 +1,223 @@
+API key|APIK
+CosyVoice|coswise
+CosyVoice|cosy boys
+Box|boss
+Box|Board
+Box|Fox
+IdeaHub|ID Hub
+IdeaHub|Idea hot
+IdeaHub|IDR Hub
+IdeaHub|I D R Hub
+IdeaHub|A Hub
+IdeaHub|AI Hub
+IdeaHub|i g hub
+IdeaHub|IDHub
+IdeaHub|ArtHub
+IdeaHub|Alibaba
+IdeaHub|iP Hub
+IdeaHub|Edge Hub
+IdeaHub|iT Hub
+IdeaHub|IAP
+IdeaHub|IDLE HUB
+IdeaHub|Ad HUB
+IdeaHub|iHub
+TMG|TMD
+TMG|TMA
+TMG|TMT
+PCR|BCR
+IdeaUI|I D U I
+IdeaUI|ada UI
+IdeaUI|R D U I
+IdeaUI|IDR
+IdeaUI|IDUI
+IdeaUI|IDU I
+IdeaUI|I D U S
+IdeaShare|ID share
+IdeaShare|ITC
+IdeaShare|IDC
+JDC|JTC
+GA|T A
+IPD|IPT
+JIC|G I C
+JIC|GIC
+JIC|GNC
+JIC|GSC
+JIC|TIC
+DCP|DCB
+CloudRSE|Cloud ICE
+CloudRSE|Cloud S E
+CloudRSE|CloudRAC
+CloudRSE|Column S1
+CloudRSE|Cloud RCE
+CloudRSE|Cloud IC
+CloudRSE|Class C
+SPDT|SPTT
+SPDT|SPT
+SPDT|SV
+SPDT|SBD
+SPDT|SDD
+DRMOS|Temos
+VOMC|VMC
+VOMC|VIMC
+IPMT|HMT
+IPMT|I P M G
+TicNote|TikTok
+TicNote|Kindle
+TicNote|Tick not
+TicNote|CheckNote
+RSE|R C
+RSE|RCE
+NPU|MPU
+NPU|MP
+CPRO|CPO
+Nexent|Nexxent
+Nexent|national
+Nexent|Nexence
+Nexent|listener
+Nexent|Next
+Nexent|Nasen
+eSpace|Easybase
+eSpace|EVB
+ELB|EOD
+ELB|LBP
+Tantant|Tunnel
+TR6|T26
+OSG|V V C
+OSG|V.SA
+OSG|V.S
+QAB|KTV
+QAB|QUB
+QAB|TAB
+CDCP|C T C P
+IdeaManager|IDME
+IdeaManager|ID Management
+IdeaManager|Adminder
+IdeaManager|A D Manager
+IdeaManager|I T B
+IdeaManager|Ademana
+IdeaAgent|add agent
+Hub|Harbor
+DDR5|UDI5
+SMC|SNC
+SMC|SMP
+SMC|SMT
+SMC|S.Mago
+SMC|SM
+Skill|scale
+Skill|SGL
+ASR|A.S.I
+ASR|AIS
+ASR|AS
+ASR|LSR
+ASR|SAR
+RAG|rug
+Box300|BOSS300
+RAT|R T
+RAT|RIT
+WebSocket|53K
+WebRTC|Y8DC
+WebRTC|Y8
+WebRTC|Y86
+IRB|R B
+Windows OPS|Windows PS
+DI|D R
+DI|DA
+APP|A.P.
+UCD|UCC
+MCU|MCO
+EMC|MPC
+Kit|Kate
+Kit|Akit
+Kit|Hit
+RTC|RPC
+RTC|RDC
+Agent|AIINT
+Agent|A D
+E2E|E to E
+ADCP|A、D、C
+ADCP|A T C P
+ADCP|A D P
+QA|QV
+RMT|I M T
+UFS|DAS
+AHB|AHP
+SVC|As we see
+EulerOS|Ular OS
+NPS|MPS
+VLLM-Mindspore|VLLM MindSpot
+VLLM-Mindspore|V O L M Mind Sport
+Harmony Next|Home next
+HarmonyOS|HomeOS
+OpenClaw|Open club
+videoba|Video bar
+AI Camera|OA camera
+Charter-PDCP|Chat PDCP
+CloudLink Ki|Cloud link key
+CloudLink Endpoints|cardinal end points
+CodeWiki|Call Vicky
+ArkTS|RTS
+ArkTS|Octs
+AI Coding|AAR coding
+HCSO|HC SA
+IdeaHub Board 3 Pro|iQOO Pad 3 Pro
+IdeaHub Board 3 Pro|iDeal Hub Board 3 Pro
+ES2Pro NR|ES2 Pro N2
+IdeaPresence|Idea presents
+IdeaPresence|Idea present
+VLLM|VM
+NEO|nu
+CMC|CNC
+TRIZ|T R I C
+WeLink|VLink
+E2E DI|e to e di
+TR2|T R R
+TR1|TRE
+TR1|t r e
+ICT|RSET
+ICT|S A T
+ICT|SAD
+POC|T O C
+DFX|Delta
+EDLA|EDOA
+VC AI|VC OA
+EOS|US
+EOS|EUS
+EOS|U S
+VLLM-Ascend|VLLM ascent
+VLLM-Ascend|V O L M ascender
+ClaudeCode|Cloud coat
+ClaudeCode|cloud code
+deepseek-v4-flash|Deepseek with Flash
+deepseek-v4-flash|Deep seek with flash
+ISTFT|E-S-T-F-T
+STFT|SIFT
+pyannote|Py Note
+pyannote|P P Y Note
+TitaNet|KataNet
+ECAPA-TDNN|T8TDN
+Pura X Max|QorMax
+H1|H E
+Idealink|IDR Link
+AI MIC|AI Mike
+AI MIC|AAR Max
+AI MIC|iMac
+AI MIC|A I Max
+OBP|OPP
+IoT|LT
+IoT|L T
+TDT|TNT
+PDCP|PTCP
+PDCP|P T C P
+PDCP|PTCB
+Eump|U N B
+EOM|U M
+EOM|UOM
+EOM|UM
+Google Meet|Meet
+MAXHUB|Max, how
+MAXHUB|matchup
+MAXHUB|max5
+MAXHUB|Maxup
+MAXHUB|Mac Hub
+SSO|S O
+Webex|VX

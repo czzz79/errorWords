@@ -1,0 +1,2 @@
+# Canonical term followed by its known ASR confusion forms.
+IdeaHub|ID Hub|Idea hot|Idea Hub|I D E A Hub|IDEAHub|IDR Hub|I D R Hub|ID号吧|A Hub|AI Hub|挨家|i g hub|阿里哈勃|阿里hub|阿里云Hub|IDHub|ArtHub|二零二五上|艾利哈布|Alibaba|阿里巴巴|iP Hub|Edge Hub|iT Hub|IAP|IDLE HUB|Ad HUB|iHub|阿里 hub|阿迪Hub|阿迪汉堡

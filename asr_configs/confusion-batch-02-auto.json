@@ -1,0 +1,15 @@
+{
+  "url": "http://127.0.0.1:8756/v1/audio/transcriptions",
+  "model": "qwen3-asr",
+  "audio_directories": [
+    "outputs/tts/confusion-batch-02-qwen-baseline"
+  ],
+  "output_directory": "outputs/asr",
+  "output_name": "asr-results-auto.jsonl",
+  "language": null,
+  "language_from_manifest": false,
+  "prompt": null,
+  "timeout_seconds": 180,
+  "wait_seconds": 300,
+  "continue_on_error": true
+}

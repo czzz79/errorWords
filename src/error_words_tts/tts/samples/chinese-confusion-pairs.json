@@ -1,0 +1,26 @@
+[
+  {
+    "id": "zhiwei",
+    "text": "志伟",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:周也"]
+  },
+  {
+    "id": "zheyangzi",
+    "text": "这样子",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:张娜"]
+  },
+  {
+    "id": "neiqian",
+    "text": "内嵌",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:内墙"]
+  },
+  {
+    "id": "chenzhao",
+    "text": "陈赵",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:陈照"]
+  }
+]

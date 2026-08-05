@@ -1,0 +1,20 @@
+{
+  "description": "IdeaHub 个人音频集合的 ASR 原配置复跑。使用 8 条去重音频，自动语言识别；不生成 TTS、不加音频扰动。",
+  "input_txt": "resources/pronunciation/ideahub-cmu-next-step.txt",
+  "output_dir": "outputs/experiments/ideahub-personal-audio-asr-tuning-v1",
+  "output_readme": "# IdeaHub personal audio — ASR original configuration rerun\n\nInput: eight unique WAVs selected from `outputs/collections/ideahub-personal-audio-20260805/`; duplicate source files are not included.\n\nTest: auto-language Qwen3-ASR with the previously used random configuration. Each input is transcribed three times.\n\nKnobs: `temperature=0.65`, `top_p=1.0`, `top_k=50`, `min_p=0.0`, `seed=null`, `language=null`, `prompt=null`.\n\nNo TTS or audio augmentation is run.\n",
+  "stages": {"pronunciation": false, "tts": false, "augmentation": false, "asr": true, "report": false, "dictionary_postprocess": false},
+  "asr": {
+    "input_manifests": ["experiments/manifests/ideahub-personal-audio-tuning-v1.jsonl"],
+    "expected_input_rows": 8,
+    "workers": 1,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 3,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name": "auto-original-t065-p100-k050-mp000", "language": null, "prompt": null, "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  }
+}

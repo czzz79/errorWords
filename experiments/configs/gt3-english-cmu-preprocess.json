@@ -1,0 +1,23 @@
+{
+  "description": "GT3 英文/缩写 CMU 音素预处理：只从 canonical 经 CMUdict 生成单步音素扰动，暂不启动 TTS/ASR。",
+  "input_txt": "resources/gt3-by-type/english-word-acronym.txt",
+  "output_dir": "outputs/experiments/gt3-english-cmu-preprocess",
+  "sample_language": "English",
+  "include_known_confusions": false,
+  "stages": {
+    "pronunciation": true,
+    "tts": false,
+    "augmentation": false,
+    "asr": false,
+    "report": false,
+    "dictionary_postprocess": false
+  },
+  "pronunciation": {
+    "mode": "english_cmu",
+    "include_canonical": false,
+    "rule_files": ["src/error_words_tts/pronunciation/rules/english.json"],
+    "renderabilities": ["phoneme_required"],
+    "max_rule_count": 1,
+    "max_variants_per_term": 8
+  }
+}

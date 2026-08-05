@@ -1,0 +1,39 @@
+{
+  "input_txt": "gt.txt",
+  "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-official.json",
+  "output_dir": "outputs/confusion/cosyvoice3-official",
+  "sample_language": "Auto",
+  "include_original_audio": true,
+  "include_known_confusions": false,
+  "augmentation": {
+    "enabled": true,
+    "seed": 20260717,
+    "continue_on_error": true,
+    "perturbations": [
+      {"name": "speed-090", "type": "speed", "factor": 0.9},
+      {"name": "speed-110", "type": "speed", "factor": 1.1},
+      {"name": "noise-18db", "type": "white_noise", "snr_db": 18},
+      {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+      {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+    ]
+  },
+  "asr": {
+    "url": "http://127.0.0.1:8756/v1/audio/transcriptions",
+    "model": "qwen3-asr",
+    "language": null,
+    "language_from_manifest": false,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "service": {
+      "manage": true,
+      "distribution": "Ubuntu-24.04",
+      "working_directory": "/home/jsqdc/qwen3-asr",
+      "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python",
+      "module": "qwenasr_service.main",
+      "config": "config/service.yaml",
+      "process_match": "qwenasr_service.main"
+    }
+  }
+}

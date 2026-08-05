@@ -1,0 +1,55 @@
+[
+  {
+    "id": "chenghong",
+    "text": "程宏",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:陈红"]
+  },
+  {
+    "id": "zhongduan",
+    "text": "终端",
+    "language": "Chinese",
+    "tags": ["chinese", "term", "gt", "reference-confusion:中端"]
+  },
+  {
+    "id": "sinan",
+    "text": "司南",
+    "language": "Chinese",
+    "tags": [
+      "chinese",
+      "term",
+      "gt",
+      "reference-confusion:思南",
+      "reference-confusion:四南",
+      "reference-confusion:思兰",
+      "reference-confusion:四奶"
+    ]
+  },
+  {
+    "id": "qab",
+    "text": "Q A B",
+    "language": "English",
+    "tags": [
+      "english",
+      "acronym",
+      "gt",
+      "reference-confusion:KTV",
+      "reference-confusion:QUB",
+      "reference-confusion:Q币",
+      "reference-confusion:TAB"
+    ]
+  },
+  {
+    "id": "bar310",
+    "text": "Bar 三幺零",
+    "language": "Auto",
+    "tags": [
+      "mixed",
+      "alphanumeric",
+      "gt",
+      "reference-confusion:八三幺零",
+      "reference-confusion:发三幺零",
+      "reference-confusion:八层"
+    ]
+  }
+]

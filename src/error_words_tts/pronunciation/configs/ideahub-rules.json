@@ -1,0 +1,11 @@
+{
+  "samples": "src/error_words_tts/pronunciation/samples/ideahub.json",
+  "rule_files": [
+    "src/error_words_tts/pronunciation/rules/english.json",
+    "src/error_words_tts/pronunciation/rules/chinese.json"
+  ],
+  "enabled_rules": "all",
+  "max_rule_count": 2,
+  "output": "outputs/pronunciation/ideahub/pronunciation-variants.jsonl",
+  "summary": "outputs/pronunciation/ideahub/summary.json"
+}

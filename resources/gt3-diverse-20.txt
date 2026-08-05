@@ -1,0 +1,27 @@
+# GT3 当前失败集：英文/混合 10 个 + 中文 10 个。
+# 筛选条件：本次 36 条 CosyVoice 音频的 compact 失败率 >= 83%，优先选择
+# 已知真实混淆词较多、错误转写种类多，并覆盖不同错误模式的术语。
+
+# 英文/混合：字母数字、数字展开、长型号、分词、英语近音与中英混读。
+TR6|T二六|TR六|T幺六|T26|T R六|天下六
+E2E|一、二、一|e二e|一to一|E to E|一对一
+WeLink|我一定看的明|我一定走后街|VLink|we link
+IdeaHub K3 CP1000+EDLA|ID号K三CP一千加EDLA|iDeal Hub K3 CP一千。加E D L A|iDHub K三CP一千加EDLA|idea hub k3 cp一千加edla
+TicNote|TikTok|Kindle|Tick not|CheckNote
+SubTR|Sub天|上不贴|再不贴|上TI
+26A|二十六，哎|二十六A|二六A|二十六月|二六V
+Nexent|Nexxent|南盛的|南盛它|national|Nexence|listener|Next|next 端|Nasen
+910B|九百一十币|九幺零B|九二零B|九N B|九元NPU|就NPU
+CloudRSE|Cloud ICE|Cloud S E|CloudRAC|Column S1|Cloud RCE|Cloud IC|Class C
+
+# 中文：人名/称谓近音、声韵母替换、词义替换及连续长短语错误。
+赵峻|赵军|赵云|赵先生|赵俊|张云舟|赵经理|赵金
+玮彬|伟斌|尾屏|慧敏|北兵|韦斌
+显义|显一|田野|田毅|显意|显艺
+闫帅|严帅|元帅|袁帅|杨帅|延川
+竞分|净分|精分|劲风|进分
+园庆|元庆|袁婷|袁庆|袁鑫
+道建|刀剑|到建|大剑|大建
+鹭兴|陆鑫|露西|陆星|路行
+周清|周星|周庆|周姐|卢青|周婷|周兴
+智真会议|至真会议|质证会议|执政会议|资深会议

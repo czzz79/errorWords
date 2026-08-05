@@ -1,0 +1,23 @@
+{
+  "engine": "cosyvoice3",
+  "workers": 1,
+  "model_dir": "D:\\models\\Fun-CosyVoice3-0.5B-2512",
+  "repo_dir": "C:\\Users\\jsqdc\\Desktop\\workspace\\errorWords\\third_party\\CosyVoice",
+  "prompt_wav": "C:\\Users\\jsqdc\\Desktop\\workspace\\errorWords\\third_party\\CosyVoice\\asset\\cross_lingual_prompt.wav",
+  "phoneme_input": {
+    "enabled": true,
+    "format": "cosyvoice_arpabet",
+    "text_frontend": false
+  },
+  "voice": {
+    "name": "male-cross-lingual-reference",
+    "tags": ["voice:male", "source:cross-lingual-prompt", "f0-median:147hz"]
+  },
+  "instructions": [
+    {
+      "name": "male_standard_clear",
+      "instruct": "Use a natural, clear, neutral adult male voice. Speak the given text accurately at a normal pace. Do not add any other content.",
+      "tags": ["voice:male", "delivery:neutral", "clarity:clear", "pace:medium"]
+    }
+  ]
+}
