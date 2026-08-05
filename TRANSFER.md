@@ -40,10 +40,11 @@ third_party/CosyVoice
 inputs/generatedaudios/
 ```
 
-然后修改内网 ASR 地址并运行：
+内网使用 `uv` 管理 Python 环境。首次运行会根据 `pyproject.toml` 安装本项目及其依赖；
+也可以先执行 `uv sync`。然后修改内网 ASR 地址并运行：
 
 ```powershell
-python run_pipeline.py --config experiments/configs/gt3-english-cmu-cosy-intranet-augment-asr.json
+uv run python run_pipeline.py --config experiments/configs/gt3-english-cmu-cosy-intranet-augment-asr.json
 ```
 
 该配置不启动或停止 ASR，只等待外部服务端口；它会生成 5 种单项音频扰动，
