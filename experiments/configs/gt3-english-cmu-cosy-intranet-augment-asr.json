@@ -1,0 +1,48 @@
+{
+  "description": "内网续跑：读取 generatedaudios 中已生成的英文 CMU/CosyVoice clean WAV，只做五种音频扰动、外部 ASR 和报告，不加载 TTS。",
+  "input_txt": "resources/gt3-by-type/english-word-acronym.txt",
+  "output_dir": "outputs/experiments/gt3-english-cmu-cosy-intranet-augment-asr",
+  "output_readme": "# GT3 English CMU intranet augmentation + ASR\n\nInput audio must be extracted from the `generatedaudios` repository to `inputs/generatedaudios/gt3-english-cmu-cosy-clean/`. The manifest is `tts-manifest.jsonl`; it contains 357 unique clean WAV records.\n\nStages: reuse TTS manifest, generate five single perturbations, call an external OpenAI-compatible ASR service, and write reports. Expected ASR rows: 357 x 5 = 1,785.\n\nBefore running, change `asr.url`, `asr.service.host`, and `asr.service.port` if the intranet service is not on 127.0.0.1:8756. The service is not started or stopped by this experiment.\n",
+  "sample_language": "English",
+  "include_known_confusions": false,
+  "stages": {
+    "pronunciation": false,
+    "tts": false,
+    "augmentation": true,
+    "asr": true,
+    "report": true,
+    "dictionary_postprocess": false
+  },
+  "augmentation": {
+    "input_manifest": "inputs/generatedaudios/gt3-english-cmu-cosy-clean/tts-manifest.jsonl",
+    "include_original_audio": false,
+    "seed": 20260804,
+    "continue_on_error": true,
+    "perturbations": [
+      {"name": "speed-090", "type": "speed", "factor": 0.9},
+      {"name": "speed-110", "type": "speed", "factor": 1.1},
+      {"name": "noise-18db", "type": "white_noise", "snr_db": 18},
+      {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+      {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+    ]
+  },
+  "asr": {
+    "url": "http://127.0.0.1:8756/v1/audio/transcriptions",
+    "model": "qwen3-asr",
+    "workers": 1,
+    "language": null,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 1,
+    "service": {
+      "mode": "external",
+      "host": "127.0.0.1",
+      "port": 8756
+    },
+    "conditions": [
+      {"name": "english-cmu-t065-p100-k050-mp000", "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  }
+}

@@ -31,3 +31,20 @@ third_party/CosyVoice
 
 不要把完整 `outputs/` 目录提交进源码仓库。小型包可直接放 Git LFS；较大的
 包应使用内网制品库/对象存储，Git 只提交 manifest、校验值和下载位置。
+
+## 内网续跑
+
+将 `generatedaudios` 仓库 ZIP 解压到源码仓库下的：
+
+```text
+inputs/generatedaudios/
+```
+
+然后修改内网 ASR 地址并运行：
+
+```powershell
+python run_pipeline.py --config experiments/configs/gt3-english-cmu-cosy-intranet-augment-asr.json
+```
+
+该配置不启动或停止 ASR，只等待外部服务端口；它会生成 5 种单项音频扰动，
+共 1,785 条输入，再通过 `/v1/audio/transcriptions` 执行 ASR。
