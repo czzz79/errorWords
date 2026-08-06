@@ -22,6 +22,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -251,7 +252,9 @@ def _run_asr(config: dict[str, Any], manifest: Path, output: Path) -> list[dict[
                     model=str(asr.get("model", "qwen3-asr")), language=_condition_optional(asr, condition, "language"),
                     language_from_manifest=bool(_condition_value(asr, condition, "language_from_manifest", False)), prompt=_condition_optional(asr, condition, "prompt"),
                     api_key=_optional(asr.get("api_key")), timeout_seconds=float(asr.get("timeout_seconds", 180)),
-                    continue_on_error=bool(asr.get("continue_on_error", True)), workers=int(asr.get("workers", 1)))
+                    continue_on_error=bool(asr.get("continue_on_error", True)), workers=int(asr.get("workers", 1)),
+                    backend=str(asr.get("backend", "local_wsl")),
+                    no_proxy=bool(asr.get("no_proxy", False)))
                 rows = _load_jsonl(result)
                 if len(rows) != expected:
                     raise RuntimeError(f"{result} expected {expected} rows, got {len(rows)}")
@@ -261,6 +264,8 @@ def _run_asr(config: dict[str, Any], manifest: Path, output: Path) -> list[dict[
                     "sampling": _sampling(condition),
                     "language": _condition_optional(asr, condition, "language"),
                     "prompt": _condition_optional(asr, condition, "prompt"),
+                    "backend": str(asr.get("backend", "local_wsl")),
+                    "no_proxy": bool(asr.get("no_proxy", False)),
                 })
                 if code:
                     print(f"WARNING: ASR {name} run {repeat} has row errors")
@@ -272,12 +277,21 @@ def _run_asr(config: dict[str, Any], manifest: Path, output: Path) -> list[dict[
 def _asr_service(asr: dict[str, Any], condition: dict[str, Any], configs: Path, log_path: Path) -> Iterator[str]:
     service = _mapping(asr.get("service", {}), "asr.service")
     mode = str(service.get("mode", "external")).lower()
+    backend = str(asr.get("backend", "local_wsl")).strip() or "local_wsl"
+    if backend not in {"local_wsl", "openai_http"}:
+        raise ValueError(f"unsupported asr.backend: {backend}")
     host, port = str(service.get("host", "127.0.0.1")), int(service.get("port", 8756))
     url = str(asr.get("url", f"http://{host}:{port}/v1/audio/transcriptions"))
+    parsed_url = urlsplit(url)
+    if "url" in asr and parsed_url.hostname:
+        host = parsed_url.hostname
+        port = parsed_url.port or (443 if parsed_url.scheme == "https" else 80)
     if mode == "external":
         _wait_port(host, port, float(asr.get("wait_seconds", 300)))
         yield url
         return
+    if backend == "openai_http":
+        raise ValueError("asr.service.mode must be 'external' for the openai_http backend")
     if mode != "managed":
         raise ValueError("asr.service.mode must be 'managed' or 'external'")
     if _port_open(host, port):
@@ -774,6 +788,9 @@ def _asr_run_fingerprint(
         "language": _condition_optional(asr, condition, "language"),
         "language_from_manifest": bool(_condition_value(asr, condition, "language_from_manifest", False)),
         "prompt": _condition_optional(asr, condition, "prompt"),
+        "backend": str(asr.get("backend", "local_wsl")),
+        "url": str(asr.get("url", "")),
+        "no_proxy": bool(asr.get("no_proxy", False)),
     }
     import hashlib
     return hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()

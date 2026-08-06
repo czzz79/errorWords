@@ -102,8 +102,13 @@ def run_config(config_path: Path, *, dry_run: bool = False) -> int:
     tts_dir = output_dir / "tts"
     tts_manifest = tts_dir / "manifest.jsonl"
     asr_settings = _as_mapping(config.get("asr", {}), "asr")
+    asr_backend = str(asr_settings.get("backend", "local_wsl")).strip() or "local_wsl"
+    if asr_backend not in {"local_wsl", "openai_http"}:
+        raise ValueError(f"unsupported asr.backend: {asr_backend}")
     service_settings = _as_mapping(asr_settings.get("service", {}), "asr.service")
-    manage_service = bool(service_settings.get("manage", True))
+    manage_service = bool(service_settings.get("manage", asr_backend == "local_wsl"))
+    if asr_backend == "openai_http" and manage_service:
+        raise ValueError("asr.service.manage must be false for the openai_http backend")
     service_started = False
     service_stopped = False
 
@@ -173,6 +178,8 @@ def run_config(config_path: Path, *, dry_run: bool = False) -> int:
             timeout_seconds=float(asr_settings.get("timeout_seconds", 180)),
             continue_on_error=bool(asr_settings.get("continue_on_error", True)),
             workers=int(asr_settings.get("workers", 1)),
+            backend=asr_backend,
+            no_proxy=bool(asr_settings.get("no_proxy", False)),
         )
         results = _load_jsonl(asr_output)
         output_txt = output_dir / "confusion-words.txt"

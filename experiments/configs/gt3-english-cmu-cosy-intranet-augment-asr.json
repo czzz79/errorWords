@@ -27,8 +27,10 @@
     ]
   },
   "asr": {
-    "url": "http://127.0.0.1:8756/v1/audio/transcriptions",
-    "model": "qwen3-asr",
+    "backend": "openai_http",
+    "url": "http://200.4.188.200:18000/v1/audio/transcriptions",
+    "model": "Qwen3-ASR",
+    "no_proxy": true,
     "workers": 1,
     "language": null,
     "prompt": null,
@@ -38,8 +40,8 @@
     "repeats": 1,
     "service": {
       "mode": "external",
-      "host": "127.0.0.1",
-      "port": 8756
+      "host": "200.4.188.200",
+      "port": 18000
     },
     "conditions": [
       {"name": "english-cmu-t065-p100-k050-mp000", "temperature": 0.65, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}

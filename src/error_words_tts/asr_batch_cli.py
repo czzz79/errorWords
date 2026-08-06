@@ -29,6 +29,9 @@ def run_config(config_path: Path) -> int:
     config = _load_config(config_path)
     root = _project_root(config_path)
     url = str(config.get("url", DEFAULT_SERVICE_URL)).strip()
+    backend = str(config.get("backend", "local_wsl")).strip() or "local_wsl"
+    if backend not in {"local_wsl", "openai_http"}:
+        raise ValueError(f"unsupported ASR backend: {backend}")
     model = str(config.get("model", "qwen3-asr")).strip()
     output_name = str(config.get("output_name", "asr-results.jsonl")).strip()
     raw_output_directory = _optional_string(config.get("output_directory"))
@@ -101,6 +104,8 @@ def run_config(config_path: Path) -> int:
                 timeout_seconds=timeout_seconds,
                 continue_on_error=continue_on_error,
                 workers=workers,
+                backend=backend,
+                no_proxy=bool(config.get("no_proxy", False)),
             )
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"ASR directory failed: {directory}: {exc}", file=sys.stderr)

@@ -27,6 +27,33 @@ def test_compare_text_records_exact_and_compact_matches() -> None:
     assert comparison["compact_match"] is True
 
 
+def test_clean_response_text_removes_internal_language_wrapper() -> None:
+    assert asr_cli._clean_response_text(
+        "language English<asr_text>A P Y key."
+    ) == "A P Y key."
+    assert asr_cli._clean_response_text("language Chinese<asr_text>爱好者") == "爱好者"
+    assert asr_cli._clean_response_text("plain transcript") == "plain transcript"
+
+
+def test_asr_backend_validation_is_explicit(tmp_path) -> None:
+    audio_path = tmp_path / "term.wav"
+    audio_path.write_bytes(b"audio")
+    try:
+        asr_cli._transcribe_audio(
+            audio_path,
+            url="http://127.0.0.1:1/v1/audio/transcriptions",
+            model="qwen3-asr",
+            language=None,
+            prompt=None,
+            timeout_seconds=0.01,
+            backend="unsupported",
+        )
+    except ValueError as exc:
+        assert "unsupported ASR backend" in str(exc)
+    else:  # pragma: no cover - defensive assertion
+        raise AssertionError("unsupported backend was accepted")
+
+
 def test_asr_result_preserves_pronunciation_metadata() -> None:
     row = {
         "sample_id": "ideahub",

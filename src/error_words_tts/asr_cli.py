@@ -4,6 +4,7 @@ import argparse
 import json
 import mimetypes
 import os
+import re
 import socket
 import sys
 import time
@@ -38,6 +39,8 @@ def main() -> int:
         timeout_seconds=args.timeout_seconds,
         continue_on_error=args.continue_on_error,
         workers=args.workers,
+        backend=args.backend,
+        no_proxy=args.no_proxy,
     )
 
 
@@ -50,6 +53,12 @@ def _build_parser() -> argparse.ArgumentParser:
         default="http://127.0.0.1:8756/v1/audio/transcriptions",
         help="Qwen3-ASR OpenAI-compatible transcription endpoint",
     )
+    parser.add_argument(
+        "--backend",
+        choices=("local_wsl", "openai_http"),
+        default="local_wsl",
+        help="ASR backend profile; both profiles use the multipart transcription API",
+    )
     parser.add_argument("--model", default="qwen3-asr", help="Compatibility model field")
     parser.add_argument("--language", default=None, help="Optional fixed ASR language hint")
     parser.add_argument(
@@ -59,6 +68,11 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--prompt", default=None, help="Optional ASR context prompt")
     parser.add_argument("--api-key", default=None, help="Optional Bearer API key")
+    parser.add_argument(
+        "--no-proxy",
+        action="store_true",
+        help="Bypass HTTP(S) proxy settings (useful for private-network ASR endpoints)",
+    )
     parser.add_argument("--timeout-seconds", type=float, default=180.0)
     parser.add_argument("--wait-seconds", type=float, default=0.0, help="Wait for the ASR TCP port")
     parser.add_argument("--workers", type=int, default=1, help="Concurrent ASR requests")
@@ -96,6 +110,8 @@ def _transcribe_manifest(
     continue_on_error: bool,
     api_key: str | None = None,
     workers: int = 1,
+    backend: str = "local_wsl",
+    no_proxy: bool = False,
 ) -> int:
     if workers < 1:
         raise ValueError("ASR workers must be at least 1")
@@ -113,6 +129,8 @@ def _transcribe_manifest(
             timeout_seconds=timeout_seconds,
             continue_on_error=continue_on_error,
             workers=workers,
+            backend=backend,
+            no_proxy=no_proxy,
         )
     transcriptions: dict[tuple[str, str | None, str | None], dict[str, Any]] = {}
     transcribable_count = 0
@@ -145,7 +163,7 @@ def _transcribe_manifest(
                 asr_result["status"] = "reused"
             else:
                 try:
-                    asr_result = _transcribe_audio(
+                    asr_result = _invoke_transcribe_audio(
                         audio_path,
                         url=url,
                         model=model,
@@ -153,6 +171,8 @@ def _transcribe_manifest(
                         prompt=prompt,
                         api_key=api_key,
                         timeout_seconds=timeout_seconds,
+                        backend=backend,
+                        no_proxy=no_proxy,
                     )
                     transcriptions[cache_key] = dict(asr_result)
                 except (OSError, ValueError) as exc:
@@ -191,6 +211,8 @@ def _transcribe_manifest_parallel(
     timeout_seconds: float,
     continue_on_error: bool,
     workers: int,
+    backend: str,
+    no_proxy: bool,
 ) -> int:
     """Transcribe rows concurrently while preserving manifest output order."""
     started = time.perf_counter()
@@ -207,6 +229,8 @@ def _transcribe_manifest_parallel(
                 prompt=prompt,
                 api_key=api_key,
                 timeout_seconds=timeout_seconds,
+                backend=backend,
+                no_proxy=no_proxy,
             )
             for row in rows
         ]
@@ -257,6 +281,8 @@ def _transcribe_one_row(
     prompt: str | None,
     api_key: str | None,
     timeout_seconds: float,
+    backend: str = "local_wsl",
+    no_proxy: bool = False,
 ) -> tuple[dict[str, Any], int, int]:
     result = _base_result(row)
     audio_path, path_error = _resolve_audio_path(row.get("audio_path"), manifest_path)
@@ -272,7 +298,7 @@ def _transcribe_one_row(
     assert audio_path is not None
     row_language = _select_language(row, language, language_from_manifest)
     try:
-        asr_result = _transcribe_audio(
+        asr_result = _invoke_transcribe_audio(
             audio_path,
             url=url,
             model=model,
@@ -280,6 +306,8 @@ def _transcribe_one_row(
             prompt=prompt,
             api_key=api_key,
             timeout_seconds=timeout_seconds,
+            backend=backend,
+            no_proxy=no_proxy,
         )
     except (OSError, ValueError) as exc:
         asr_result = {"status": "error", "error": str(exc), "service_url": url}
@@ -288,6 +316,15 @@ def _transcribe_one_row(
     if isinstance(transcript, str):
         result["comparison"] = _compare_text(str(row.get("text", "")), transcript)
     return result, 1, int(asr_result.get("status") == "error")
+
+
+def _invoke_transcribe_audio(audio_path: Path, **kwargs: Any) -> dict[str, Any]:
+    """Call the client while keeping the old monkeypatch/call signature valid."""
+    backend = kwargs.pop("backend", "local_wsl")
+    no_proxy = bool(kwargs.pop("no_proxy", False))
+    if backend == "local_wsl" and not no_proxy:
+        return _transcribe_audio(audio_path, **kwargs)
+    return _transcribe_audio(audio_path, backend=backend, no_proxy=no_proxy, **kwargs)
 
 
 def _resolve_audio_path(value: Any, manifest_path: Path) -> tuple[Path, str | None]:
@@ -325,7 +362,11 @@ def _transcribe_audio(
     prompt: str | None,
     timeout_seconds: float,
     api_key: str | None = None,
+    backend: str = "local_wsl",
+    no_proxy: bool = False,
 ) -> dict[str, Any]:
+    if backend not in {"local_wsl", "openai_http"}:
+        raise ValueError(f"unsupported ASR backend: {backend}")
     fields = {"model": model, "response_format": "json"}
     if language:
         fields["language"] = language
@@ -343,8 +384,13 @@ def _transcribe_audio(
         method="POST",
     )
     started = time.perf_counter()
+    opener = (
+        urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        if no_proxy
+        else urllib.request
+    )
     try:
-        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+        with opener.open(request, timeout=timeout_seconds) as response:
             response_body = response.read().decode("utf-8")
             status_code = response.status
     except urllib.error.HTTPError as exc:
@@ -355,16 +401,42 @@ def _transcribe_audio(
     payload = json.loads(response_body)
     if not isinstance(payload, dict) or not isinstance(payload.get("text"), str):
         raise ValueError(f"unexpected ASR response: {response_body[:500]}")
-    return {
+    cleaned_text = _clean_response_text(payload["text"])
+    result = {
         "status": "success",
-        "text": payload["text"],
+        "text": cleaned_text,
+        "raw_text": payload["text"],
         "elapsed_ms": round((time.perf_counter() - started) * 1000),
         "http_status": status_code,
         "service_url": url,
         "model": model,
         "language": language,
         "prompt": prompt,
+        "backend": backend,
+        "no_proxy": no_proxy,
     }
+    if isinstance(payload.get("language"), str):
+        result["detected_language"] = payload["language"]
+    if isinstance(payload.get("usage"), dict):
+        result["usage"] = payload["usage"]
+    return result
+
+
+_ASR_TEXT_MARKER_RE = re.compile(
+    r"^\s*(?:language\s*[:=]?\s*[^<\r\n]+)?<asr_text>\s*",
+    re.IGNORECASE,
+)
+
+
+def _clean_response_text(value: str) -> str:
+    """Remove provider wrappers while retaining the server text separately.
+
+    The internal Qwen3-ASR deployment currently returns values such as
+    ``language English<asr_text>A P Y key.``.  Local WSL responses are plain
+    text, so this function is intentionally a no-op for ordinary transcripts.
+    """
+    cleaned = _ASR_TEXT_MARKER_RE.sub("", value, count=1)
+    return cleaned.strip()
 
 
 def _encode_multipart(fields: dict[str, str], audio_path: Path) -> tuple[bytes, str]:
