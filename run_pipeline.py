@@ -26,6 +26,7 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))
 
 from error_words_tts.asr_cli import _load_jsonl, _transcribe_manifest
 from error_words_tts.augmentation.cli import run_config as run_augmentation
@@ -37,8 +38,17 @@ from error_words_tts.confusion.cli import (
     parse_gt_file,
     write_confusion_outputs,
 )
+from tools.prepare_asr_audio import AudioRange, find_speech_ranges, read_input, write_segments
 
-STAGES = ("pronunciation", "tts", "augmentation", "asr", "report", "dictionary_postprocess")
+STAGES = (
+    "pronunciation",
+    "tts",
+    "augmentation",
+    "asr_preprocess",
+    "asr",
+    "report",
+    "dictionary_postprocess",
+)
 READY = {"generated", "cached"}
 
 
@@ -54,7 +64,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True, type=Path, help="experiment JSON")
     parser.add_argument("--dry-run", action="store_true", help="validate/expand only; never start models")
-    parser.add_argument("--stages", help="comma-separated overrides, e.g. tts,augmentation,asr,report")
+    parser.add_argument("--stages", help="comma-separated overrides, e.g. tts,augmentation,asr_preprocess,asr,report")
     args = parser.parse_args()
     try:
         run_pipeline(args.config, dry_run=args.dry_run, stage_override=args.stages)
@@ -103,7 +113,7 @@ def run_pipeline(config_path: Path, *, dry_run: bool = False, stage_override: st
     asr_manifest = output / "asr-input-manifest.jsonl"
     if stages["augmentation"]:
         asr_manifest = _run_augmentation(config, tts_manifest, output)
-    elif stages["asr"]:
+    elif stages["asr"] or stages["asr_preprocess"]:
         supplied = _asr_manifest_sources(config)
         if supplied:
             asr = _mapping(config.get("asr"), "asr")
@@ -114,8 +124,17 @@ def run_pipeline(config_path: Path, *, dry_run: bool = False, stage_override: st
                 ready_only=bool(asr.get("ready_only", False)),
                 expected_rows=_optional_int(asr.get("expected_input_rows"), "asr.expected_input_rows"),
             )
+        elif stages["tts"]:
+            # A clean TTS run is already a valid ASR input manifest.  Keep the
+            # old reusable asr-input-manifest path for experiments that start
+            # after augmentation, but do not require a redundant copy here.
+            _require_manifest(tts_manifest, "TTS output")
+            asr_manifest = tts_manifest
         else:
             _require_manifest(asr_manifest, "augmentation disabled: reusable asr-input-manifest.jsonl")
+
+    if stages["asr_preprocess"]:
+        asr_manifest = _run_asr_preprocess(config, asr_manifest, output)
 
     result_paths: list[dict[str, Any]] = []
     if stages["asr"]:
@@ -202,6 +221,163 @@ def _run_augmentation(config: dict[str, Any], tts_manifest: Path, output: Path) 
     merged = output / "asr-input-manifest.jsonl"
     _merge_manifests(manifests, merged)
     return merged
+
+
+def _run_asr_preprocess(config: dict[str, Any], input_manifest: Path, output: Path) -> Path:
+    """Prepare ASR audio without contacting an ASR service.
+
+    Each generated/cached input row is validated as PCM16/16kHz/mono, then
+    optionally split by the lightweight energy VAD in ``tools``.  The output
+    manifest is a normal ASR manifest, with one row per segment and all source
+    metadata retained.  Rows that cannot be prepared remain in the manifest as
+    skipped/error rows so the ASR result count still matches the input count.
+    """
+    _require_manifest(input_manifest, "ASR preprocess input")
+    settings = _mapping(config.get("asr_preprocess", {}), "asr_preprocess")
+    enabled = bool(settings.get("enabled", True))
+    if not enabled:
+        # The stage switch is the primary control.  An explicitly disabled
+        # block is useful when sharing a config, so preserve the input exactly.
+        return input_manifest
+
+    use_vad = bool(settings.get("use_vad", True))
+    threshold = float(settings.get("threshold", 0.02))
+    frame_ms = int(settings.get("frame_ms", 20))
+    padding_ms = int(settings.get("padding_ms", 200))
+    silence_finalize_ms = int(settings.get("silence_finalize_ms", 600))
+    min_speech_ms = int(settings.get("min_speech_ms", 250))
+    merge_gap_ms = int(settings.get("merge_gap_ms", 300))
+    if not 0 <= threshold <= 1:
+        raise ValueError("asr_preprocess.threshold must be between 0 and 1")
+    for name, value in {
+        "frame_ms": frame_ms,
+        "padding_ms": padding_ms,
+        "silence_finalize_ms": silence_finalize_ms,
+        "min_speech_ms": min_speech_ms,
+        "merge_gap_ms": merge_gap_ms,
+    }.items():
+        if value < 0 or (name == "frame_ms" and value == 0):
+            raise ValueError(f"asr_preprocess.{name} must be positive/non-negative")
+
+    target = output / "asr-preprocess"
+    audio_dir = target / "audio"
+    target.mkdir(parents=True, exist_ok=True)
+    rows_out: list[dict[str, Any]] = []
+    summary = {
+        "schema_version": 1,
+        "input_manifest": str(input_manifest),
+        "processing": {
+            "contract": "16kHz mono PCM16 WAV",
+            "vad_enabled": use_vad,
+            "speaker_diarization": "not_run",
+            "audio_transform": "PCM ranges copied and wrapped in WAV; no resampling or gain change",
+            "parameters": {
+                "threshold": threshold,
+                "frame_ms": frame_ms,
+                "padding_ms": padding_ms,
+                "silence_finalize_ms": silence_finalize_ms,
+                "min_speech_ms": min_speech_ms,
+                "merge_gap_ms": merge_gap_ms,
+            },
+        },
+        "input_row_count": 0,
+        "output_row_count": 0,
+        "generated_segment_count": 0,
+        "skipped_row_count": 0,
+        "error_row_count": 0,
+    }
+
+    for row_index, source in enumerate(_load_jsonl(input_manifest)):
+        summary["input_row_count"] += 1
+        base = dict(source)
+        source_status = str(source.get("status", "missing"))
+        source_audio = source.get("audio_path")
+        if source_status not in READY:
+            base["asr_preprocess"] = {"status": "skipped", "reason": f"source status is {source_status}"}
+            rows_out.append(base)
+            summary["skipped_row_count"] += 1
+            continue
+        if not source_audio:
+            base["status"] = "error"
+            base["asr_preprocess"] = {"status": "error", "error": "source row has no audio_path"}
+            rows_out.append(base)
+            summary["error_row_count"] += 1
+            continue
+
+        input_path = Path(str(source_audio))
+        if not input_path.is_absolute():
+            # Historical manifests use both repository-relative paths and
+            # paths relative to the manifest directory.  Mirror ASR CLI's
+            # lookup, with the repository root as the final candidate.
+            candidates = [input_manifest.parent / input_path,
+                          input_manifest.parent.parent / input_path,
+                          ROOT / input_path]
+            input_path = next((candidate for candidate in candidates if candidate.is_file()), candidates[-1]).resolve()
+        try:
+            pcm, info = read_input(input_path)
+            if use_vad:
+                ranges = find_speech_ranges(
+                    pcm,
+                    threshold=threshold,
+                    frame_ms=frame_ms,
+                    padding_ms=padding_ms,
+                    silence_finalize_ms=silence_finalize_ms,
+                    min_speech_ms=min_speech_ms,
+                    merge_gap_ms=merge_gap_ms,
+                )
+                if not ranges:
+                    ranges = [AudioRange(0, info.duration_ms)]
+                    reason = "vad_empty_fallback_full_audio"
+                else:
+                    reason = "vad"
+            else:
+                ranges = [AudioRange(0, info.duration_ms)]
+                reason = "full_audio"
+
+            # Keep each source in its own directory.  This avoids collisions
+            # when several TTS runs reuse the same sample_id/audio filename.
+            sample_label = _safe_name(str(source.get("sample_id") or source.get("id") or f"row-{row_index:06d}"))
+            segment_dir = audio_dir / f"{row_index:06d}-{sample_label}"
+            segments = write_segments(pcm, info, segment_dir, ranges, reason=reason)
+            for segment in segments:
+                item = dict(source)
+                item["audio_path"] = str((segment_dir / str(segment["file"])).resolve())
+                item["source_audio_path"] = str(input_path.resolve())
+                item["source_tts_status"] = source_status
+                item["status"] = "generated"
+                item["asr_preprocess"] = {
+                    "status": "generated",
+                    "segment_index": int(segment["index"]),
+                    "start_ms": int(segment["start_ms"]),
+                    "end_ms": int(segment["end_ms"]),
+                    "duration_ms": int(segment["duration_ms"]),
+                    "reason": str(segment["reason"]),
+                    "input_sha256": info.pcm_sha256,
+                }
+                rows_out.append(item)
+                summary["generated_segment_count"] += 1
+        except (OSError, ValueError) as exc:
+            base["status"] = "error"
+            base["source_audio_path"] = str(input_path)
+            base["asr_preprocess"] = {"status": "error", "error": str(exc)}
+            rows_out.append(base)
+            summary["error_row_count"] += 1
+
+    if not rows_out:
+        raise ValueError("ASR preprocess produced an empty manifest")
+    summary["output_row_count"] = len(rows_out)
+    manifest = target / "manifest.jsonl"
+    with manifest.open("w", encoding="utf-8") as handle:
+        for row in rows_out:
+            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+    _write_json(target / "summary.json", summary)
+    print(
+        f"ASR preprocess: input={summary['input_row_count']} "
+        f"segments={summary['generated_segment_count']} "
+        f"skipped={summary['skipped_row_count']} errors={summary['error_row_count']} "
+        f"manifest={manifest}"
+    )
+    return manifest
 
 
 def _augmentation_input_manifest(config: dict[str, Any], output: Path) -> Path:
@@ -579,6 +755,17 @@ def _validate_config(config: dict[str, Any], stages: dict[str, bool]) -> None:
     if stages["asr"]:
         asr = _mapping(config.get("asr"), "asr")
         for item in asr.get("conditions", [{"name": "default"}]): _sampling(_mapping(item, "asr condition"))
+    if stages["asr_preprocess"]:
+        settings = _mapping(config.get("asr_preprocess", {}), "asr_preprocess")
+        threshold = float(settings.get("threshold", 0.02))
+        if not 0 <= threshold <= 1:
+            raise ValueError("asr_preprocess.threshold must be between 0 and 1")
+        for name in ("frame_ms", "padding_ms", "silence_finalize_ms", "min_speech_ms", "merge_gap_ms"):
+            value = int(settings.get(name, {"frame_ms": 20, "padding_ms": 200,
+                                            "silence_finalize_ms": 600, "min_speech_ms": 250,
+                                            "merge_gap_ms": 300}[name]))
+            if value < 0 or (name == "frame_ms" and value == 0):
+                raise ValueError(f"asr_preprocess.{name} must be positive/non-negative")
     augmentation = config.get("augmentation")
     if isinstance(augmentation, dict):
         perturbations = augmentation.get("perturbations", [])
@@ -600,7 +787,8 @@ def _validate_reuse(config: dict[str, Any], output: Path, stages: dict[str, bool
     if stages["tts"] and not stages["pronunciation"]: _require_file(output / "samples.json", "reused samples")
     if stages["augmentation"] and not stages["tts"]:
         _require_manifest(_augmentation_input_manifest(config, output), "reused TTS")
-    if stages["asr"] and not stages["augmentation"] and not _asr_manifest_sources(config): _require_manifest(output / "asr-input-manifest.jsonl", "reused ASR input")
+    if (stages["asr"] or stages["asr_preprocess"]) and not stages["augmentation"] and not _asr_manifest_sources(config) and not stages["tts"]:
+        _require_manifest(output / "asr-input-manifest.jsonl", "reused ASR input")
     if (stages["report"] or stages["dictionary_postprocess"]) and not stages["asr"] and not _existing_results(output):
         raise FileNotFoundError("reused ASR results are missing")
 

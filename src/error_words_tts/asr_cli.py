@@ -135,8 +135,10 @@ def _transcribe_manifest(
     transcriptions: dict[tuple[str, str | None, str | None], dict[str, Any]] = {}
     transcribable_count = 0
     error_count = 0
+    started = time.perf_counter()
+    total_rows = len(rows)
     with output_path.open("w", encoding="utf-8") as output:
-        for row in rows:
+        for index, row in enumerate(rows, start=1):
             result = _base_result(row)
             audio_path, path_error = _resolve_audio_path(row.get("audio_path"), manifest_path)
             if row.get("status") not in {"generated", "cached"}:
@@ -187,6 +189,14 @@ def _transcribe_manifest(
             _print_console_safe(
                 f"ASR {status}: {audio_path.name} -> "
                 f"{transcript or asr_result.get('error', '')}"
+            )
+            elapsed = max(0.0, time.perf_counter() - started)
+            remaining = elapsed / index * (total_rows - index) if index else 0.0
+            print(
+                f"ASR [{index}/{total_rows} {index * 100 / total_rows:5.1f}%] "
+                f"workers=1 elapsed={_format_duration(elapsed)} "
+                f"eta={_format_duration(remaining)}",
+                flush=True,
             )
             if status == "error" and not continue_on_error:
                 return 1
@@ -528,6 +538,16 @@ def _normalize_text(value: str) -> str:
 
 def _compact_text(value: str) -> str:
     return "".join(character for character in value if character.isalnum())
+
+
+def _format_duration(seconds: float) -> str:
+    """Render elapsed/ETA values compactly for terminal progress output."""
+    total = max(0, int(round(seconds)))
+    hours, remainder = divmod(total, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if hours:
+        return f"{hours:d}:{minutes:02d}:{secs:02d}"
+    return f"{minutes:02d}:{secs:02d}"
 
 
 def _write_result(output: Any, row: dict[str, Any]) -> None:

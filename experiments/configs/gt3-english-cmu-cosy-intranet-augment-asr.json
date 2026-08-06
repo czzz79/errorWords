@@ -2,13 +2,14 @@
   "description": "内网续跑：读取 generatedaudios 中已生成的英文 CMU/CosyVoice clean WAV，只做五种音频扰动、外部 ASR 和报告，不加载 TTS。",
   "input_txt": "resources/gt3-by-type/english-word-acronym.txt",
   "output_dir": "outputs/experiments/gt3-english-cmu-cosy-intranet-augment-asr",
-  "output_readme": "# GT3 English CMU intranet augmentation + ASR\n\nInput audio must be extracted from the `generatedaudios` repository to `inputs/generatedaudios/gt3-english-cmu-cosy-clean/`. The manifest is `tts-manifest.jsonl`; it contains 357 unique clean WAV records.\n\nStages: reuse TTS manifest, generate five single perturbations, call an external OpenAI-compatible ASR service, and write reports. Expected ASR rows: 357 x 5 = 1,785.\n\nBefore running, change `asr.url`, `asr.service.host`, and `asr.service.port` if the intranet service is not on 127.0.0.1:8756. The service is not started or stopped by this experiment.\n",
+  "output_readme": "# GT3 English CMU intranet augmentation + ASR\n\nInput audio must be extracted from the `generatedaudios` repository to `inputs/generatedaudios/gt3-english-cmu-cosy-clean/`. The manifest is `tts-manifest.jsonl`; it contains 357 unique clean WAV records.\n\nStages: reuse TTS manifest, generate five single perturbations, validate/split audio with optional VAD, call an external OpenAI-compatible ASR service, and write reports. Preprocessed audio and its manifest are stored under `asr-preprocess/`.\n\nBefore running, change `asr.url`, `asr.service.host`, and `asr.service.port` if the intranet service is not on 127.0.0.1:8756. The service is not started or stopped by this experiment.\n",
   "sample_language": "English",
   "include_known_confusions": false,
   "stages": {
     "pronunciation": false,
     "tts": false,
     "augmentation": true,
+    "asr_preprocess": true,
     "asr": true,
     "report": true,
     "dictionary_postprocess": false
@@ -25,6 +26,16 @@
       {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
       {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
     ]
+  },
+  "asr_preprocess": {
+    "enabled": true,
+    "use_vad": true,
+    "threshold": 0.02,
+    "frame_ms": 20,
+    "padding_ms": 200,
+    "silence_finalize_ms": 600,
+    "min_speech_ms": 250,
+    "merge_gap_ms": 300
   },
   "asr": {
     "backend": "openai_http",

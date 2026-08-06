@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import wave
 from pathlib import Path
 
 import numpy as np
@@ -147,3 +148,29 @@ def test_external_asr_never_stops_service(monkeypatch: pytest.MonkeyPatch) -> No
 def test_service_log_sampling_match_accepts_float_rendering() -> None:
     log = "Qwen decoding configured temperature=0.0 top_p=1.0 top_k=0 min_p=0.0 seed=None"
     assert run_pipeline._sampling_in_log(log, {"temperature": 0, "top_p": 1, "top_k": 0, "min_p": 0, "seed": None})
+
+
+def test_asr_preprocess_is_independent_stage_and_preserves_metadata(tmp_path: Path) -> None:
+    source_audio = tmp_path / "source.wav"
+    with wave.open(str(source_audio), "wb") as handle:
+        handle.setnchannels(1)
+        handle.setsampwidth(2)
+        handle.setframerate(16_000)
+        handle.writeframes((b"\x00\x00" * 16_000))
+    input_manifest = tmp_path / "asr-input-manifest.jsonl"
+    input_manifest.write_text(json.dumps({
+        "sample_id": "demo", "text": "IdeaHub", "status": "generated",
+        "audio_path": str(source_audio), "target_confusions": ["Idea Hub"],
+    }) + "\n", encoding="utf-8")
+
+    output_manifest = run_pipeline._run_asr_preprocess(
+        {"asr_preprocess": {"use_vad": False}}, input_manifest, tmp_path / "output"
+    )
+    rows = run_pipeline._load_jsonl(output_manifest)
+    assert len(rows) == 1
+    assert rows[0]["sample_id"] == "demo"
+    assert rows[0]["target_confusions"] == ["Idea Hub"]
+    assert rows[0]["asr_preprocess"]["reason"] == "full_audio"
+    assert Path(rows[0]["audio_path"]).is_file()
+    summary = json.loads((output_manifest.parent / "summary.json").read_text(encoding="utf-8"))
+    assert summary["generated_segment_count"] == 1
