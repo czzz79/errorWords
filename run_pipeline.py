@@ -905,6 +905,7 @@ def _merge_manifests(
                 if ready_only and source_row.get("status") not in READY:
                     continue
                 row = dict(source_row)
+                _rebase_manifest_audio_path(row, path)
                 row.setdefault("benchmark_source_set", path.parent.name)
                 row.setdefault("benchmark_source_manifest", str(path))
                 handle.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -912,6 +913,38 @@ def _merge_manifests(
     if not count: raise ValueError("combined ASR manifest is empty")
     if expected_rows is not None and count != expected_rows:
         raise ValueError(f"combined ASR manifest expected {expected_rows} rows, got {count}")
+
+
+def _rebase_manifest_audio_path(row: dict[str, Any], manifest_path: Path) -> None:
+    """Keep a relative audio path valid after its manifest is copied elsewhere.
+
+    Exported audio packages conventionally store ``../audio/example.wav`` next
+    to ``manifests/manifest.jsonl``.  ``_merge_manifests`` writes a new
+    combined manifest under an experiment output directory, so retaining that
+    relative string would otherwise point at the wrong directory.  Resolve it
+    while the source manifest location is still known, then prefer a path
+    relative to the repository root for portable experiment outputs.
+    """
+    value = row.get("audio_path")
+    if not isinstance(value, str) or not value.strip():
+        return
+    original = Path(value)
+    if original.is_absolute():
+        return
+
+    candidates = (
+        manifest_path.parent / original,
+        manifest_path.parent.parent / original,
+        ROOT / original,
+    )
+    resolved = next((candidate.resolve() for candidate in candidates if candidate.is_file()), None)
+    if resolved is None:
+        # Preserve the original value so later validation can report it.
+        return
+    try:
+        row["audio_path"] = str(resolved.relative_to(ROOT))
+    except ValueError:
+        row["audio_path"] = str(resolved)
 
 
 def _existing_results(output: Path) -> list[dict[str, Any]]:
