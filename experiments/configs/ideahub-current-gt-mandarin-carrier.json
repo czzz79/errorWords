@@ -1,0 +1,31 @@
+{
+  "description": "IdeaHub current-GT Mandarin-carrier expansion. Canonical CMU is mapped to Mandarin-like Pinyin by the 2014 transfer rules, then rendered using high-frequency Chinese carriers; GT text is never passed to TTS.",
+  "input_txt": "resources/ideahub-current-gt.txt",
+  "output_dir": "outputs/experiments/ideahub-current-gt-mandarin-carrier-20260811",
+  "output_readme": "# IdeaHub current-GT Mandarin carrier expansion\n\nPurpose: test the non-cheating Chinese route separately. Canonical IdeaHub CMU phones are mapped to Mandarin-like Pinyin using the 2014 language-transfer rules, then to high-frequency Chinese carrier characters. GT Chinese strings never become TTS input.\n",
+  "sample_language": "Auto",
+  "include_known_confusions": true,
+  "stages": {"pronunciation": true, "tts": true, "augmentation": true, "asr_preprocess": true, "asr": true, "report": true, "dictionary_postprocess": false},
+  "pronunciation": {
+    "mode": "english_mandarin_transfer",
+    "tts_format": "chinese_carrier",
+    "rules_path": "src/error_words_tts/pronunciation/rules/english-mandarin-transfer.json",
+    "overrides_path": "resources/pronunciation/english-pronunciation-overrides.json",
+    "include_baseline": true,
+    "variants": ["paper_direct_mapping", "paper_l1_transfer", "paper_l1_transfer_open_a"],
+    "carrier_rime_dictionary": "resources/wusong-base.dict.yaml",
+    "carrier_high_frequency_words": "resources/high_frequency_words.txt",
+    "carrier_jieba_dictionary": "resources/jieba-dict.txt"
+  },
+  "tts": {"runs": [{"name": "chinese_carrier_neutral", "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe", "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-neutral-clear.json"}]},
+  "augmentation": {"include_original_audio": true, "seed": 20260811, "continue_on_error": true, "perturbations": [{"name": "speed-110", "type": "speed", "factor": 1.1}, {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200}, {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}]},
+  "asr_preprocess": {"enabled": true, "use_vad": true, "threshold": 0.02, "frame_ms": 20, "padding_ms": 200, "silence_finalize_ms": 600, "min_speech_ms": 250, "merge_gap_ms": 300},
+  "asr": {
+    "backend": "local_wsl", "model": "qwen3-asr", "workers": 1, "language": null, "prompt": null, "timeout_seconds": 180, "wait_seconds": 300, "continue_on_error": true, "repeats": 1,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name": "auto-t090", "language": null, "temperature": 0.9, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null},
+      {"name": "zh-t090", "language": "zh", "temperature": 0.9, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  }
+}

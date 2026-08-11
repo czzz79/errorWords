@@ -1,0 +1,5 @@
+# Current IdeaHub ground-truth confusions supplied on 2026-08-11.
+# This list is evaluation-only. The pronunciation variants in the companion
+# experiments use phoneme-level transformations and never send these strings
+# as tts_text.
+IdeaHub|ada haba|Ajar haba|阿迪哈布|Dia habis.|Ah dear Hubba|阿联哈本|Ah, die hebben|ada hub.|Ah dia habis|Alia Harbour|阿迪哈|阿里哈巴|阿德哈夫|阿的汉堡|阿爹话|阿爹下巴|Ah, they have.|Are they happy?|阿啲 have|阿爹还不。|Padia habis.|Adirhub|R D Hub|阿爹，有把|阿迪亚哈巴

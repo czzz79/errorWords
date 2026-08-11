@@ -1,0 +1,92 @@
+{
+  "description": "IdeaHub current-GT phonetic reachability probe. This is a target-directed diagnostic: no GT candidate is used as TTS text; each probe is a CMU phone recomposition of the canonical Idea|Hub structure.",
+  "input_txt": "resources/ideahub-current-gt.txt",
+  "output_dir": "outputs/experiments/ideahub-current-gt-cmu-reachability-20260811",
+  "output_readme": "# IdeaHub current-GT CMU reachability probe\n\nPurpose: determine whether the current 25 supplied GT forms are acoustically reachable at all. This is not general confusion-mining evidence: variants are deliberately selected phonetic recompositions, but `tts_text` always remains `IdeaHub` and only `phoneme_text` is supplied to CosyVoice.\n\nCoverage: Latin-like resegmentations, Mandarin-like syllable sequences, final-vowel epenthesis, and linked short phrases. Two voices, clean plus three audio perturbations, then Auto / Chinese / English ASR requests.\n",
+  "sample_language": "Auto",
+  "include_known_confusions": true,
+  "stages": {
+    "pronunciation": true,
+    "tts": true,
+    "augmentation": true,
+    "asr_preprocess": true,
+    "asr": true,
+    "report": true,
+    "dictionary_postprocess": false
+  },
+  "pronunciation": {
+    "mode": "english_cmu",
+    "rules_path": "src/error_words_tts/pronunciation/rules/english-cmu.json",
+    "overrides_path": "resources/pronunciation/english-pronunciation-overrides.json",
+    "baseline_only": true,
+    "boundary_modes": {"camel_case": "connected"},
+    "max_variants_per_term": 32,
+    "manual_variants": [
+      {"name": "open_a_di_haba", "tokens": {"Idea": ["AA1", "D", "IY1", "AH0"], "Hub": ["HH", "AA1", "B", "AH0"]}},
+      {"name": "open_a_da_haba", "tokens": {"Idea": ["AA1", "D", "AH0"], "Hub": ["HH", "AA1", "B", "AH0"]}},
+      {"name": "affricated_ajar_haba", "tokens": {"Idea": ["AA1", "JH", "AA1", "R"], "Hub": ["HH", "AA1", "B", "AH0"]}},
+      {"name": "lateral_ali_haba", "tokens": {"Idea": ["AA1", "L", "IY1"], "Hub": ["HH", "AA1", "B", "AH0"]}},
+      {"name": "reduced_a_de_hafu", "tokens": {"Idea": ["AA1", "D", "EH1"], "Hub": ["HH", "AA1", "F", "UW1"]}},
+      {"name": "rhotic_adir_hub", "tokens": {"Idea": ["AA1", "D", "IH1", "R"], "Hub": ["HH", "AH1", "B"]}},
+      {"name": "lia_harbour", "tokens": {"Idea": ["AA1", "L", "IY1", "AH0"], "Hub": ["HH", "AA1", "R", "B", "ER0"]}},
+      {"name": "letterlike_r_d_hub", "tokens": {"Idea": ["AA1", "R", "D", "IY1"], "Hub": ["HH", "AH1", "B"]}},
+      {"name": "dia_habis", "tokens": {"Idea": ["D", "IY1", "AH0"], "Hub": ["HH", "AA1", "B", "IY1", "S"]}},
+      {"name": "a_dia_habis", "tokens": {"Idea": ["AA1", "D", "IY1", "AH0"], "Hub": ["HH", "AA1", "B", "IY1", "S"]}},
+      {"name": "padia_habis", "tokens": {"Idea": ["P", "AA1", "D", "IY1", "AH0"], "Hub": ["HH", "AA1", "B", "IY1", "S"]}},
+      {"name": "a_dear_hubba", "tokens": {"Idea": ["AA1", "D", "IH1", "R"], "Hub": ["HH", "AH1", "B", "AH0"]}},
+      {"name": "a_die_hebben", "tokens": {"Idea": ["AA1", "D", "AY1"], "Hub": ["HH", "EH1", "B", "AH0", "N"]}},
+      {"name": "a_they_have", "tokens": {"Idea": ["AA1", "DH", "EY1"], "Hub": ["HH", "AE1", "V"]}},
+      {"name": "are_they_happy", "tokens": {"Idea": ["AA1", "R", "DH", "EY1"], "Hub": ["HH", "AE1", "P", "IY0"]}},
+      {"name": "a_di_have", "tokens": {"Idea": ["AA1", "D", "IY1"], "Hub": ["HH", "AE1", "V"]}},
+      {"name": "a_lian_haben", "tokens": {"Idea": ["AA1", "L", "IY1", "AH0", "N"], "Hub": ["HH", "AA1", "B", "EH1", "N"]}},
+      {"name": "a_de_han_bao", "tokens": {"Idea": ["AA1", "D", "AH0"], "Hub": ["HH", "AE1", "N", "B", "AW1"]}},
+      {"name": "a_die_hua", "tokens": {"Idea": ["AA1", "D", "AY1"], "Hub": ["HH", "UW1", "AH0"]}},
+      {"name": "a_die_xia_ba", "tokens": {"Idea": ["AA1", "D", "AY1"], "Hub": ["SH", "AA1", "B", "AH0"]}},
+      {"name": "a_die_hai_bu", "tokens": {"Idea": ["AA1", "D", "AY1"], "Hub": ["HH", "AY1", "B", "UW1"]}},
+      {"name": "a_die_you_ba", "tokens": {"Idea": ["AA1", "D", "AY1", "Y", "UW1"], "Hub": ["B", "AA1"]}}
+    ]
+  },
+  "tts": {
+    "runs": [
+      {"name": "male_standard", "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe", "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-cmu-male-standard-clear.json"},
+      {"name": "reference_neutral", "python": "D:\\anaconda\\envs\\cosyvoice\\python.exe", "engine_config": "src/error_words_tts/tts/configs/cosyvoice3-cmu-neutral-clear.json"}
+    ]
+  },
+  "augmentation": {
+    "include_original_audio": true,
+    "seed": 20260811,
+    "continue_on_error": true,
+    "perturbations": [
+      {"name": "speed-110", "type": "speed", "factor": 1.1},
+      {"name": "lowpass-3200hz", "type": "lowpass", "cutoff_hz": 3200},
+      {"name": "hard-clip-035", "type": "hard_clip", "threshold": 0.35}
+    ]
+  },
+  "asr_preprocess": {
+    "enabled": true,
+    "use_vad": true,
+    "threshold": 0.02,
+    "frame_ms": 20,
+    "padding_ms": 200,
+    "silence_finalize_ms": 600,
+    "min_speech_ms": 250,
+    "merge_gap_ms": 300
+  },
+  "asr": {
+    "backend": "local_wsl",
+    "model": "qwen3-asr",
+    "workers": 1,
+    "language": null,
+    "prompt": null,
+    "timeout_seconds": 180,
+    "wait_seconds": 300,
+    "continue_on_error": true,
+    "repeats": 1,
+    "service": {"mode": "managed", "distribution": "Ubuntu-24.04", "working_directory": "/home/jsqdc/qwen3-asr", "python": "/home/jsqdc/miniconda3/envs/qwenasr/bin/python", "base_config": "config/service-ideahub-random.yaml", "host": "127.0.0.1", "port": 8756},
+    "conditions": [
+      {"name": "auto-t090", "language": null, "temperature": 0.9, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null},
+      {"name": "zh-t090", "language": "zh", "temperature": 0.9, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null},
+      {"name": "en-t090", "language": "en", "temperature": 0.9, "top_p": 1.0, "top_k": 50, "min_p": 0.0, "seed": null}
+    ]
+  }
+}
